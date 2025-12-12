@@ -1,13 +1,15 @@
 ﻿@model List<FitnessCenter.WebApp.Models.Trainer>
 
-    @{ ViewData["Title"] = "Ana Sayfa"; }
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
 
-    <div class="p-5 mb-4 bg-light rounded-3 jumbotron-bg text-white text-center" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1950'); background-size: cover; background-position: center; height: 500px; display: flex; flex-direction: column; justify-content: center;">
-        <div class="container-fluid py-5">
-            <h1 class="display-3 fw-bold">SINIRLARINI ZORLA</h1>
-            <p class="col-md-8 fs-4 mx-auto">Profesyonel ekipmanlar ve uzman eğitmenlerle hayalindeki vücuda kavuş.</p>
+<div class="p-5 mb-4 bg-light rounded-3 jumbotron-bg text-white text-center" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1950'); background-size: cover; background-position: center; height: 500px; display: flex; flex-direction: column; justify-content: center;">
+    <div class="container-fluid py-5">
+        <h1 class="display-3 fw-bold">SINIRLARINI ZORLA</h1>
+        <p class="col-md-8 fs-4 mx-auto">Profesyonel ekipmanlar ve uzman eğitmenlerle hayalindeki vücuda kavuş.</p>
 
-            @if (!User.Identity.IsAuthenticated)
+        @if (!User.Identity.IsAuthenticated)
         {
             <a class="btn btn-warning btn-lg fw-bold mt-3 px-5" asp-controller="Account" asp-action="Register">HEMEN BAŞLA</a>
         }
@@ -15,59 +17,59 @@
         {
             <a class="btn btn-warning btn-lg fw-bold mt-3 px-5" asp-controller="Appointment" asp-action="Create">RANDEVU AL</a>
         }
-        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold">NELER YAPIYORUZ?</h2>
+        <p class="text-muted">Hedefine ulaşman için ihtiyacın olan her şey burada.</p>
     </div>
 
-    <div class="container mt-5">
-        <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold">NELER YAPIYORUZ?</h2>
-            <p class="text-muted">Hedefine ulaşman için ihtiyacın olan her şey burada.</p>
-        </div>
-
-        <div class="row text-center">
-            <div class="col-lg-4 mb-4">
-                <div class="card h-100 shadow-sm border-0 hover-effect">
-                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500" class="card-img-top" style="height: 250px; object-fit: cover;">
-                    <div class="card-body">
-                        <h4 class="card-title fw-bold">Fitness & Body</h4>
-                        <p class="card-text text-muted">Kas kütleni artır ve güçlen.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 mb-4">
-                <div class="card h-100 shadow-sm border-0 hover-effect">
-                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500" class="card-img-top" style="height: 250px; object-fit: cover;">
-                    <div class="card-body">
-                        <h4 class="card-title fw-bold">Cardio & Fit</h4>
-                        <p class="card-text text-muted">Kondisyonunu zirveye taşı.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 mb-4">
-                <div class="card h-100 shadow-sm border-0 hover-effect">
-                    <img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500" class="card-img-top" style="height: 250px; object-fit: cover;">
-                    <div class="card-body">
-                        <h4 class="card-title fw-bold">Yoga & Pilates</h4>
-                        <p class="card-text text-muted">Esneklik kazan ve zihnini dinlendir.</p>
-                    </div>
+    <div class="row text-center">
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 hover-effect">
+                <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500" class="card-img-top" style="height: 250px; object-fit: cover;">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Fitness & Body</h4>
+                    <p class="card-text text-muted">Kas kütleni artır ve güçlen.</p>
                 </div>
             </div>
         </div>
-        <div class="text-center mt-3">
-            <a asp-controller="Home" asp-action="Services" class="btn btn-outline-dark">Tüm Hizmet Detayları & Fiyatlar</a>
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 hover-effect">
+                <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=500" class="card-img-top" style="height: 250px; object-fit: cover;">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Cardio & Fit</h4>
+                    <p class="card-text text-muted">Kondisyonunu zirveye taşı.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 hover-effect">
+                <img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500" class="card-img-top" style="height: 250px; object-fit: cover;">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Yoga & Pilates</h4>
+                    <p class="card-text text-muted">Esneklik kazan ve zihnini dinlendir.</p>
+                </div>
+            </div>
         </div>
     </div>
+    <div class="text-center mt-3">
+        <a asp-controller="Home" asp-action="Services" class="btn btn-outline-dark">Tüm Hizmet Detayları & Fiyatlar</a>
+    </div>
+</div>
 
-    <hr class="my-5" />
+<hr class="my-5" />
 
-    <div class="container py-3">
-        <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold">UZMAN KADROMUZ</h2>
-            <p class="text-muted">Alanında en iyi eğitmenlerle çalışın</p>
-        </div>
+<div class="container py-3">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold">UZMAN KADROMUZ</h2>
+        <p class="text-muted">Alanında en iyi eğitmenlerle çalışın</p>
+    </div>
 
-        <div class="row">
-            @foreach (var trainer in Model.Take(3))
+    <div class="row">
+        @foreach (var trainer in Model.Take(3))
         {
             <div class="col-md-4 mb-4">
                 <div class="card text-center shadow border-0 h-100">
@@ -79,9 +81,60 @@
                 </div>
             </div>
         }
-        </div>
+    </div>
 
-        <div class="text-center mt-4">
-            <a asp-controller="Trainers" asp-action="Index" class="btn btn-outline-dark px-4">Tüm Eğitmenleri Gör</a>
+    <div class="text-center mt-4">
+        <a asp-controller="TrainersApiReq" asp-action="Index" class="btn btn-outline-dark px-4">Tüm Eğitmenleri Gör</a>
+    </div>
+</div>
+<div class="container-fluid bg-light py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2">HAKKIMIZDA</span>
+
+                <h2 class="display-5 fw-bold mb-4">
+                    Güç, Disiplin ve <br /> Sağlıklı Yaşam
+                </h2>
+
+                <p class="fs-5 text-muted">
+                    Fitness Center, yalnızca bir spor salonu değil;
+                    hedeflerine ulaşman için tasarlanmış profesyonel bir yaşam alanıdır.
+                </p>
+
+                <p class="text-muted">
+                    Modern ekipmanlarımız, uzman eğitmen kadromuz ve kişiye özel
+                    programlarımızla seni güvenle zirveye taşırız.
+                </p>
+
+                <div class="d-flex gap-5 mt-4">
+                    <div>
+                        <h3 class="fw-bold text-warning mb-0">10+</h3>
+                        <small class="text-muted">Yıllık Deneyim</small>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold text-warning mb-0">5000+</h3>
+                        <small class="text-muted">Mutlu Üye</small>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold text-warning mb-0">25+</h3>
+                        <small class="text-muted">Uzman Eğitmen</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 position-relative text-center">
+                <img src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74?w=900"
+                     class="img-fluid rounded-4 shadow-lg"
+                     style="max-height:450px;object-fit:cover;"
+                     alt="About Us">
+
+                <div class="position-absolute top-0 start-0 translate-middle
+                            bg-warning rounded-circle opacity-25"
+                     style="width:120px;height:120px;"></div>
+            </div>
+
         </div>
     </div>
+</div>
