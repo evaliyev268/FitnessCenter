@@ -132,13 +132,20 @@ namespace FitnessCenter.WebApp.Controllers
 
        
         [HttpGet]
-        public IActionResult CreateService() => View();
+        public IActionResult CreateServices() => View();
 
         [HttpPost]
-        public IActionResult CreateService(Service service)
+        public IActionResult CreateServices(Service service)
         {
+            ModelState.Remove("ImageUrl");
             if (ModelState.IsValid)
             {
+
+                if (string.IsNullOrEmpty(service.ImageUrl))
+                {
+                    service.ImageUrl = "https://previews.123rf.com/images/koblizeek/koblizeek2204/koblizeek220400315/185376169-no-image-vector-symbol-missing-available-icon-no-gallery-for-this-moment-placeholder.avif";
+                }
+
                 _context.Services.Add(service);
                 _context.SaveChanges();
                 return RedirectToAction("Services");
