@@ -25,6 +25,6 @@ namespace FitnessCenter.WebApp.Models
         [Required]
         [StringLength(50)]
         [Display(Name = "Rol")]
-        public string Role { get; set; } = "Member"; // Admin, Member
+        public string Role { get; set; } = "Member"; // Admin, Member, Trainer
     }
 }

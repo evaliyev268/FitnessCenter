@@ -1,0 +1,84 @@
+﻿@model IEnumerable<FitnessCenter.WebApp.Models. Appointment>
+@{
+    ViewData["Title"] = "Randevularım";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">
+        <i class="fas fa-calendar-alt text-warning"></i> Randevularım
+    </h2>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tarih & Saat</th>
+                        <th>Eğitmen</th>
+                        <th>Hizmet</th>
+                        <th>Süre</th>
+                        <th>Durum</th>
+                        <th>Notlar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@item.AppointmentDate.ToString("dd MMMM yyyy")</strong><br />
+                                <small class="text-muted">@item.AppointmentDate.ToString("HH:mm")</small>
+                            </td>
+                            <td>
+                                <i class="fas fa-user-tie text-primary"></i> @item.Trainer?.Name
+                            </td>
+                            <td>@item.Service?.Name</td>
+                            <td>@item.Service?.Duration dk</td>
+                            <td>
+                                @if (item.Status == "Onaylandı")
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Onaylandı
+                                    </span>
+                                }
+                                else if (item.Status == "Reddedildi")
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle"></i> Reddedildi
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-clock"></i> Beklemede
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Notes))
+                                {
+                                    <small class="text-muted">@item. Notes</small>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> Henüz randevunuz bulunmamaktadır.
+            <br />
+            <a href="@Url.Action("Create", "Appointment")" class="btn btn-warning mt-3">
+                <i class="fas fa-plus"></i> Yeni Randevu Al
+            </a>
+        </div>
+    }
+</div>

@@ -1,37 +1,65 @@
-@model FitnessCenter.WebApp.Models.Appointment
+﻿@model FitnessCenter.WebApp.Models.Appointment
+@{
+    ViewData["Title"] = "Randevu Al";
+}
 
-<div class="container mt-5">
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="card shadow-lg border-0">
-                <div class="card-header bg-warning text-dark fw-bold text-center">
-                    <h3><i class="fas fa-calendar-check"></i> Randevu Olu�tur</h3>
+                <div class="card-header bg-warning text-dark text-center">
+                    <h3><i class="fas fa-calendar-plus"></i> Yeni Randevu Oluştur</h3>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body">
                     <form asp-action="Create" method="post">
-
                         <div class="mb-3">
-                            <label class="form-label fw-bold">E�itmen Se�iniz</label>
-                            <select asp-for="TrainerId" class="form-select" asp-items="ViewBag.Trainers">
-                                <option value="">-- Bir E�itmen Se�in --</option>
+                            <label class="form-label fw-bold">Eğitmen Seçiniz</label>
+                            <select asp-for="TrainerId" class="form-select" required>
+                                <option value="">-- Eğitmen Seçiniz --</option>
+                                @foreach (var trainer in ViewBag.Trainers)
+                                {
+                                    <option value="@trainer.Id">
+                                        @trainer.Name - @trainer. Speciality
+                                        @if (trainer.WorkStartTime.HasValue && trainer.WorkEndTime.HasValue)
+                                        {
+                                            <text> (Çalışma:  @trainer.WorkStartTime.Value.ToString(@"hh\:mm") - @trainer.WorkEndTime.Value.ToString(@"hh\:mm"))</text>
+                                        }
+                                    </option>
+                                }
                             </select>
+                            <span asp-validation-for="TrainerId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Hizmet Se�iniz</label>
-                            <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.Services">
-                                <option value="">-- Bir Hizmet Se�in --</option>
+                            <label class="form-label fw-bold">Hizmet Seçiniz</label>
+                            <select asp-for="ServiceId" class="form-select" required>
+                                <option value="">-- Hizmet Seçiniz --</option>
+                                @foreach (var service in ViewBag.Services)
+                                {
+                                    <option value="@service.Id">
+                                        @service.Name - @service.Duration dk - @service.Price. ToString("N2") TL
+                                    </option>
+                                }
                             </select>
+                            <span asp-validation-for="ServiceId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Tarih ve Saat</label>
-                            <input asp-for="AppointmentDate" class="form-control" type="datetime-local"
-                                   min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                            <label class="form-label fw-bold">Randevu Tarihi ve Saati</label>
+                            <input asp-for="AppointmentDate" type="datetime-local" class="form-control" required />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                            <small class="text-muted">Lütfen eğitmenin çalışma saatleri içinde bir tarih seçiniz.</small>
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-dark btn-lg">Randevuyu Onayla</button>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Notlar (İsteğe Bağlı)</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Varsa özel taleplerinizi yazınız... "></textarea>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning btn-lg fw-bold">
+                                <i class="fas fa-check-circle"></i> Randevu Oluştur
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -39,3 +67,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

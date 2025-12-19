@@ -1,28 +1,80 @@
-@model List<FitnessCenter.WebApp.Models.Trainer>
+﻿@model IEnumerable<FitnessCenter.WebApp.Models. Trainer>
+@{
+    ViewData["Title"] = "Eğitmenlerimiz";
+}
 
-    @{
-    ViewData["Title"] = "E�itmenlerimiz";
+<div class="container my-5">
+    <h2 class="text-center mb-5 fw-bold">
+        <i class="fas fa-users text-warning"></i> UZMAN EĞİTMENLERİMİZ
+    </h2>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="text-end mb-3">
+            <a href="@Url.Action("Create", "Trainers")" class="btn btn-success">
+                <i class="fas fa-plus"></i> Yeni Eğitmen Ekle
+            </a>
+        </div>
     }
 
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold">UZMAN KADROMUZ</h2>
-            <p class="text-muted">Hedeflerine ula�man i�in yan�nday�z.</p>
-        </div>
-
-        <div class="row">
-            @foreach (var trainer in Model)  {
-            <div class="col-md-4 mb-4">
-                <div class="card text-center shadow border-0 h-100">
-                    <div class="card-body p-4">
-                        <img src="@trainer.ImageUrl" class="rounded-circle mb-3 border border-3 border-warning" width="120" height="120" style="object-fit:cover;" alt="@trainer.Name">
+    <div class="row">
+        @foreach (var trainer in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm border-0 text-center">
+                    <img src="@trainer.ImageUrl" class="card-img-top rounded-circle mx-auto mt-3" 
+                         alt="@trainer. Name" style="width: 150px; height: 150px; object-fit: cover;">
+                    <div class="card-body">
                         <h5 class="card-title fw-bold">@trainer.Name</h5>
-                        <p class="card-text text-warning fw-bold">@trainer.Speciality</p>
-                        <p class="text-muted small">Profesyonel destek almak i�in randevu olu�turun.</p>
-                        <a href="#" class="btn btn-sm btn-outline-dark">Profilini G�r</a>
+                        <p class="text-muted">@trainer. Speciality</p>
+                        
+                        @if (! string.IsNullOrEmpty(trainer.Bio))
+                        {
+                            <p class="small text-secondary">@trainer.Bio</p>
+                        }
+
+                        <hr />
+
+                        <!-- ÇALIŞMA SAATLERİ -->
+                        @if (trainer.WorkStartTime.HasValue && trainer.WorkEndTime.HasValue)
+                        {
+                            <p class="mb-1">
+                                <i class="fas fa-clock text-primary"></i> 
+                                <strong>Çalışma Saatleri:</strong><br />
+                                @trainer.WorkStartTime.Value.ToString(@"hh\:mm") - @trainer.WorkEndTime.Value.ToString(@"hh\:mm")
+                            </p>
+                        }
+
+                        @if (! string.IsNullOrEmpty(trainer.WorkingDays))
+                        {
+                            <p class="mb-1">
+                                <i class="fas fa-calendar-week text-success"></i>
+                                <strong>Çalışma Günleri: </strong><br />
+                                @trainer.WorkingDays
+                            </p>
+                        }
+
+                        <!-- SAATLİK ÜCRET -->
+                        @if (trainer.HourlyRate.HasValue)
+                        {
+                            <p class="text-warning fw-bold fs-5 mb-2">
+                                <i class="fas fa-money-bill-wave"></i> @trainer.HourlyRate.Value.ToString("N2") TL/saat
+                            </p>
+                        }
+
+                        <a href="@Url.Action("Details", "Trainers", new { id = trainer.Id })" class="btn btn-outline-dark btn-sm">
+                            <i class="fas fa-eye"></i> Detayları Gör
+                        </a>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="@Url.Action("Edit", "Trainers", new { id = trainer.Id })" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i> Düzenle
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
         }
-        </div>
     </div>
+</div>

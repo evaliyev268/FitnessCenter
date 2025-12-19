@@ -10,12 +10,7 @@ namespace FitnessCenter.WebApp.Data
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                // ❌ BU SATIRI SİL VEYA YORUM SAT YAP: 
-                // context.Database.EnsureCreated();
-
-                // ✅ Migration ile veritabanı oluşturulacak, burada sadece seed data ekleyeceğiz
-
-                // --- ADMIN HESABI KONTROLÜ ---
+                // --- ADMIN HESABI ---
                 string adminEmail = "b231210553@sakarya.edu.tr";
                 if (!context.Users.Any(u => u.Email == adminEmail))
                 {
@@ -30,7 +25,45 @@ namespace FitnessCenter.WebApp.Data
                     context.SaveChanges();
                 }
 
-                // --- EĞİTMENLER (TRAINERS) ---
+                // --- EĞİTMEN HESAPLARI (User olarak giriş yapabilirler) ---
+                if (!context.Users.Any(u => u.Role == "Trainer"))
+                {
+                    var trainerUsers = new List<User>
+                    {
+                        new User
+                        {
+                            FullName = "Ahmet Yılmaz",
+                            Email = "ahmet@fitness.com",
+                            Password = "123456",
+                            Role = "Trainer"
+                        },
+                        new User
+                        {
+                            FullName = "Elif Kaya",
+                            Email = "elif@fitness.com",
+                            Password = "123456",
+                            Role = "Trainer"
+                        },
+                        new User
+                        {
+                            FullName = "Mehmet Demir",
+                            Email = "mehmet@fitness.com",
+                            Password = "123456",
+                            Role = "Trainer"
+                        },
+                        new User
+                        {
+                            FullName = "Ayşe Çelik",
+                            Email = "ayse@fitness.com",
+                            Password = "123456",
+                            Role = "Trainer"
+                        }
+                    };
+                    context.Users.AddRange(trainerUsers);
+                    context.SaveChanges();
+                }
+
+                // --- EĞİTMENLER (Trainers Tablosu) ---
                 if (!context.Trainers.Any())
                 {
                     var trainers = new List<Trainer>
@@ -38,41 +71,61 @@ namespace FitnessCenter.WebApp.Data
                         new Trainer
                         {
                             Name = "Ahmet Yılmaz",
+                            Email = "ahmet@fitness.com",
                             Speciality = "Vücut Geliştirme & Kuvvet Antrenmanı",
                             ImageUrl = "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400",
                             Bio = "10 yıllık deneyime sahip sertifikalı bodybuilding antrenörü",
-                            IsActive = true
+                            IsActive = true,
+                            WorkStartTime = new TimeSpan(9, 0, 0),  // 09:00
+                            WorkEndTime = new TimeSpan(18, 0, 0),   // 18:00
+                            HourlyRate = 500,
+                            WorkingDays = "Pazartesi, Çarşamba, Cuma"
                         },
                         new Trainer
                         {
                             Name = "Elif Kaya",
+                            Email = "elif@fitness.com",
                             Speciality = "Yoga & Pilates",
                             ImageUrl = "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400",
                             Bio = "Uluslararası yoga sertifikasına sahip meditasyon uzmanı",
-                            IsActive = true
+                            IsActive = true,
+                            WorkStartTime = new TimeSpan(10, 0, 0),
+                            WorkEndTime = new TimeSpan(19, 0, 0),
+                            HourlyRate = 400,
+                            WorkingDays = "Her gün"
                         },
                         new Trainer
                         {
                             Name = "Mehmet Demir",
+                            Email = "mehmet@fitness. com",
                             Speciality = "Crossfit & Fonksiyonel Antrenman",
                             ImageUrl = "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=400",
                             Bio = "Crossfit Level 2 Trainer, eski milli sporcu",
-                            IsActive = true
+                            IsActive = true,
+                            WorkStartTime = new TimeSpan(8, 0, 0),
+                            WorkEndTime = new TimeSpan(17, 0, 0),
+                            HourlyRate = 450,
+                            WorkingDays = "Pazartesi, Salı, Perşembe"
                         },
                         new Trainer
                         {
                             Name = "Ayşe Çelik",
+                            Email = "ayse@fitness.com",
                             Speciality = "Zumba & Cardio Dance",
                             ImageUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
                             Bio = "Dans eğitmeni ve grup dersleri uzmanı",
-                            IsActive = true
+                            IsActive = true,
+                            WorkStartTime = new TimeSpan(14, 0, 0),
+                            WorkEndTime = new TimeSpan(21, 0, 0),
+                            HourlyRate = 350,
+                            WorkingDays = "Salı, Perşembe, Cumartesi"
                         }
                     };
                     context.Trainers.AddRange(trainers);
                     context.SaveChanges();
                 }
 
-                // --- HİZMETLER (SERVICES) ---
+                // --- HİZMETLER ---
                 if (!context.Services.Any())
                 {
                     var services = new List<Service>
@@ -137,7 +190,7 @@ namespace FitnessCenter.WebApp.Data
                 }
 
                 // --- ÖRNEK ÜYE HESAPLARI ---
-                if (context.Users.Count() == 1) // Sadece admin varsa
+                if (context.Users.Count(u => u.Role == "Member") == 0)
                 {
                     var members = new List<User>
                     {

@@ -1,0 +1,115 @@
+﻿@model IEnumerable<FitnessCenter.WebApp.Models. Service>
+@{
+    ViewData["Title"] = "Hizmetlerimiz";
+}
+
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <i class="fas fa-dumbbell text-warning"></i> HİZMETLERİMİZ
+        </h1>
+        <p class="lead text-muted">Hayalinizdeki vücuda ulaşmak için profesyonel hizmetlerimiz</p>
+    </div>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="text-end mb-4">
+            <a href="@Url.Action("Create", "Services")" class="btn btn-success btn-lg">
+                <i class="fas fa-plus-circle"></i> Yeni Hizmet Ekle
+            </a>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var service in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-sm border-0 service-card">
+                        <img src="@service.ImageUrl" class="card-img-top" alt="@service.Name"
+                             style="height: 250px; object-fit: cover;">
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-dark">@service.Name</h5>
+                            <p class="card-text text-muted flex-grow-1">@service.Description</p>
+
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-clock"></i> @service.Duration dakika
+                                    </span>
+                                    <span class="text-warning fw-bold fs-4">
+                                        @service. Price. ToString("N2") TL
+                                    </span>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <a href="@Url.Action("Details", "Services", new { id = service.Id })"
+                                       class="btn btn-outline-dark">
+                                        <i class="fas fa-info-circle"></i> Detayları Gör
+                                    </a>
+
+                                    @if (User.IsInRole("Member"))
+                                    {
+                                        <a href="@Url.Action("Create", "Appointment", new { serviceId = service.Id })"
+                                           class="btn btn-warning">
+                                            <i class="fas fa-calendar-plus"></i> Randevu Al
+                                        </a>
+                                    }
+
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <div class="btn-group" role="group">
+                                            <a href="@Url.Action("Edit", "Services", new { id = service.Id })"
+                                               class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i> Düzenle
+                                            </a>
+                                            <a href="@Url.Action("Delete", "Services", new { id = service.Id })"
+                                               class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Sil
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle fa-3x mb-3"></i>
+            <h4>Henüz hizmet eklenmemiş</h4>
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="@Url.Action("Create", "Services")" class="btn btn-primary mt-3">
+                    <i class="fas fa-plus"></i> İlk Hizmeti Ekle
+                </a>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .service-card {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important;
+        }
+
+        .service-card img {
+            transition: transform 0.5s ease;
+        }
+
+        .service-card:hover img {
+            transform: scale(1.1);
+        }
+</style>

@@ -26,5 +26,32 @@ namespace FitnessCenter.WebApp.Models
 
         [Display(Name = "Aktif mi?")]
         public bool IsActive { get; set; } = true;
+
+        // YENİ ALANLAR - ÇALIŞMA SAATLERİ VE ÜCRET
+        [Display(Name = "Çalışma Başlangıç Saati")]
+        [DataType(DataType.Time)]
+        public TimeSpan? WorkStartTime { get; set; } // Örn: 09:00
+
+        [Display(Name = "Çalışma Bitiş Saati")]
+        [DataType(DataType.Time)]
+        public TimeSpan? WorkEndTime { get; set; } // Örn: 18:00
+
+        [Display(Name = "Saatlik Ücret (TL)")]
+        [Range(0, 10000, ErrorMessage = "Saatlik ücret 0-10000 TL arasında olmalıdır")]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        public decimal? HourlyRate { get; set; }
+
+        [Display(Name = "Çalışma Günleri")]
+        [StringLength(100)]
+        public string? WorkingDays { get; set; } // Örn: "Pazartesi, Çarşamba, Cuma"
+
+        // Trainer olarak sisteme giriş yapabilmesi için User ile ilişki
+        [Display(Name = "Kullanıcı ID (Giriş için)")]
+        public int? UserId { get; set; }
+
+        [Display(Name = "E-posta (Giriş)")]
+        [EmailAddress]
+        [StringLength(100)]
+        public string? Email { get; set; }
     }
 }

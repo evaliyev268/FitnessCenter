@@ -1,0 +1,91 @@
+﻿@model IEnumerable<FitnessCenter.WebApp.Models.Appointment>
+@{
+    ViewData["Title"] = "Randevu Talepleri";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">
+        <i class="fas fa-calendar-check text-info"></i> Gelen Randevu Talepleri
+    </h2>
+
+    @if (Model.Any())
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-primary text-white">
+                            <strong>@item.User?.FullName</strong>
+                            <span class="float-end">
+                                @if (item.Status == "Onaylandı")
+                                {
+                                    <span class="badge bg-success">Onaylandı</span>
+                                }
+                                else if (item.Status == "Reddedildi")
+                                {
+                                    <span class="badge bg-danger">Reddedildi</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">Beklemede</span>
+                                }
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <p><i class="fas fa-calendar"></i> <strong>Tarih:</strong> @item.AppointmentDate. ToString("dd MMMM yyyy, HH:mm")</p>
+                            <p><i class="fas fa-dumbbell"></i> <strong>Hizmet:</strong> @item. Service?.Name</p>
+                            <p><i class="fas fa-clock"></i> <strong>Süre:</strong> @item.Service?.Duration dakika</p>
+                            <p><i class="fas fa-envelope"></i> <strong>Üye E-posta:</strong> @item.User?.Email</p>
+
+                            @if (item.Status == "Beklemede")
+                            {
+                                <hr />
+                                <div class="d-flex justify-content-between">
+                                    <form asp-action="ApproveAppointment" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fas fa-check"></i> Onayla
+                                        </button>
+                                    </form>
+
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal@(item.Id)">
+                                        <i class="fas fa-times"></i> Reddet
+                                    </button>
+                                </div>
+
+                                <!-- Reddetme Modal -->
+                                <div class="modal fade" id="rejectModal@(item.Id)" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Randevu Reddetme Nedeni</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form asp-action="RejectAppointment" method="post">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <textarea name="reason" class="form-control" rows="3" placeholder="Neden reddedildi?  (isteğe bağlı)"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                                    <button type="submit" class="btn btn-danger">Reddet</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> Henüz randevu talebi bulunmamaktadır.
+        </div>
+    }
+</div>
