@@ -1,46 +1,28 @@
-﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using FitnessCenter.Models;
 using FitnessCenter.WebApp.Data;
+using System.Linq;
 
-namespace FitnessCenter.Controllers;
-
-public class HomeController : Controller
+namespace FitnessCenter.WebApp.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly AppDbContext _context;
-
-    public HomeController(ILogger<HomeController> logger, AppDbContext context)
+    public class HomeController : Controller
     {
-        _logger = logger;
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public async Task<IActionResult> Index()
-    {
-        // Ana sayfada gösterilecek veriler
-        ViewBag.Trainers = await _context.Trainers
-            .Where(t => t.IsActive)
-            .Take(3) // İlk 3 antrenör
-            .ToListAsync();
+        public HomeController(AppDbContext context)
+        {
+            _context = context;
+        }
 
-        ViewBag.Services = await _context.Services
-            .Where(s => s.IsActive)
-            .Take(6) // İlk 6 hizmet
-            .ToListAsync();
+        public IActionResult Index()
+        {
+            var trainers = _context.Trainers.ToList();
+            return View(trainers);
+        }
 
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        public IActionResult Services()
+        {
+            var services = _context.Services.ToList();
+            return View(services);
+        }
     }
 }

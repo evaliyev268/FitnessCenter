@@ -15,7 +15,7 @@ namespace FitnessCenter.WebApp.Controllers
             _context = context;
         }
 
-        // --- KAYIT OL (REGISTER) ---
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -38,7 +38,7 @@ namespace FitnessCenter.WebApp.Controllers
                     FullName = model.FullName,
                     Email = model.Email,
                     Password = model.Password,
-                    Role = "Member" // Varsayılan olarak Üye
+                    Role = "Member" 
                 };
 
                 _context.Users.Add(newUser);
@@ -49,7 +49,7 @@ namespace FitnessCenter.WebApp.Controllers
             return View(model);
         }
 
-        // --- GİRİŞ YAP (LOGIN) ---
+      
         [HttpGet]
         public IActionResult Login()
         {
@@ -63,12 +63,12 @@ namespace FitnessCenter.WebApp.Controllers
 
             if (user != null)
             {
-                // Kimlik bilgilerini hazırla (Adı, E-postası ve ROLÜ)
+               
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.FullName),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role) // Burası Admin kontrolü için önemli
+                    new Claim(ClaimTypes.Role, user.Role) 
                 };
 
                 var userIdentity = new ClaimsIdentity(claims, "CookieAuth");
@@ -83,7 +83,6 @@ namespace FitnessCenter.WebApp.Controllers
             return View();
         }
 
-        // --- ÇIKIŞ YAP (LOGOUT) ---
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync("CookieAuth");

@@ -1,9 +1,9 @@
-﻿<! DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - El Fitness</title>
+    <title>@ViewData["Title"] - Fitness Center</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -13,7 +13,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold text-uppercase text-warning" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="fas fa-dumbbell"></i> EL FITNESS
+                    <i class="fas fa-dumbbell"></i> El FITNESS
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
@@ -23,64 +23,60 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Services" asp-action="Index">Hizmetler</a>
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Services">Hizmetler</a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Trainers" asp-action="Index">Eğitmenler</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-info text-white fw-bold px-3 me-2" asp-controller="Ai" asp-action="Index">
+                                <i class="fas fa-robot"></i> AI ASİSTAN
+                            </a>
                         </li>
 
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <!-- ADMIN MENÜSÜ -->
-                            @if (User.IsInRole("Admin"))
+                        if (User.IsInRole("Trainer"))
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-primary text-white px-3 me-3" asp-controller="Trainer" asp-action="Index">EĞİTMEN PANELİ</a>
+                        </li>
+                        }
+                            if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link btn btn-danger text-white px-3 me-2" asp-controller="Admin" asp-action="Index">
-                                        <i class="fas fa-user-shield"></i> YÖNETİCİ PANELİ
-                                    </a>
-                                </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-danger text-white px-3 me-3" asp-controller="Admin" asp-action="Index">YÖNETİCİ PANELİ</a>
+                        </li>
                             }
 
-                            <!-- TRAINER MENÜSÜ -->
-                            @if (User.IsInRole("Trainer"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link btn btn-info text-white px-3 me-2" asp-controller="Appointment" asp-action="TrainerAppointments">
-                                        <i class="fas fa-calendar-check"></i> Randevu Talepleri
-                                    </a>
-                                </li>
-                            }
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-warning text-dark fw-bold px-3 me-2" asp-controller="Appointment" asp-action="Create">
+                                RANDEVU AL
+                            </a>
+                        </li>
 
-                            <!-- MEMBER MENÜSÜ -->
-                            @if (User.IsInRole("Member"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link btn btn-warning text-dark fw-bold px-3 me-2" asp-controller="Appointment" asp-action="Create">
-                                        <i class="fas fa-plus-circle"></i> RANDEVU AL
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link btn btn-outline-warning text-warning px-3 me-2" asp-controller="Appointment" asp-action="MyAppointments">
-                                        <i class="fas fa-list"></i> Randevularım
-                                    </a>
-                                </li>
-                            }
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-light px-3 me-3" asp-controller="Appointment" asp-action="MyAppointments">
+                                Randevularım
+                            </a>
+                        </li>
 
-                            <!-- KULLANICI BİLGİSİ -->
-                            <li class="nav-item ms-auto d-flex align-items-center">
-                                <span class="text-warning fw-bold me-3">
-                                    <i class="fas fa-user-circle"></i> Merhaba, @User.Identity. Name
-                                </span>
-                                <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
-                            </li>
+                        <li class="nav-item ms-auto d-flex align-items-center">
+                            <span class="text-warning fw-bold me-3">
+                                <i class="fas fa-user-circle"></i> Merhaba, @User.Identity.Name
+                            </span>
+                            <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
+                        </li>
                         }
                         else
                         {
-                            <li class="nav-item ms-auto">
-                                <a class="nav-link text-white d-inline-block me-2" asp-controller="Account" asp-action="Login">Giriş Yap</a>
-                                <a class="btn btn-warning fw-bold text-dark" asp-controller="Account" asp-action="Register">Üye Ol</a>
-                            </li>
+                        <li class="nav-item ms-auto">
+                            <a class="nav-link text-white d-inline-block me-2" asp-controller="Account" asp-action="Login">Giriş Yap</a>
+                            <a class="btn btn-warning fw-bold text-dark" asp-controller="Account" asp-action="Register">Üye Ol</a>
+                        </li>
                         }
                     </ul>
                 </div>
@@ -89,35 +85,19 @@
     </header>
 
     <div class="container">
-        <!-- TempData Mesajları -->
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle"></i> @TempData["Success"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-dark">
-        <div class="container text-white text-center py-3">
-            &copy; 2025 - El Fitness - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-warning">Gizlilik</a>
+    <footer class="border-top footer text-muted bg-dark mt-auto py-2">
+        <div class="container text-white text-center small">
+            &copy; 2025 - Fitness Center - <a asp-area="" asp-controller="Home" asp-action="Services" class="text-warning text-decoration-none">Hizmetler</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min. js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site. js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

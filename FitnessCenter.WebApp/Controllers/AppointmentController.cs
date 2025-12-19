@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FitnessCenter.WebApp.Data;
 using FitnessCenter.WebApp.Models;
@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace FitnessCenter.WebApp.Controllers
 {
-    [Authorize]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class AppointmentController : Controller
     {
         private readonly AppDbContext _context;
@@ -17,234 +17,111 @@ namespace FitnessCenter.WebApp.Controllers
             _context = context;
         }
 
-        // ============================================
-        // MEMBER:  RANDEVU ALMA SAYFASI
-        // ============================================
-        [Authorize(Roles = "Member")]
-        public async Task<IActionResult> Create()
+        [HttpGet]
+        public IActionResult Create()
         {
-            ViewBag.Trainers = await _context.Trainers
-                .Where(t => t.IsActive)
-                .OrderBy(t => t.Name)
-                .ToListAsync();
+            var services = _context.Services.ToList();
 
-            ViewBag.Services = await _context.Services
-                .Where(s => s.IsActive)
-                .OrderBy(s => s.Name)
-                .ToListAsync();
+            ViewBag.Services = new SelectList(services, "Id", "Name");
+
+            ViewBag.ServicesList = services;
+
+            var trainers = _context.Trainers.Select(t => new {
+                Id = t.Id,
+                Name = t.Name,
+                ServiceId = t.ServiceId
+            }).ToList();
+
+            ViewBag.TrainersList = trainers;
 
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Member")]
-        public async Task<IActionResult> Create(Appointment appointment)
+        public IActionResult Create(Appointment appointment)
         {
-            // Kullanıcı ID'sini al
-            var userEmail = User.FindFirstValue(ClaimTypes.Email);
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
+            var selectedService = _context.Services.Find(appointment.ServiceId);
 
-            if (user == null)
+            if (user != null && selectedService != null)
             {
-                TempData["Error"] = "Kullanıcı bulunamadı!";
-                return RedirectToAction("Login", "Account");
-            }
+                appointment.UserId = user.Id;
+                appointment.Status = "Bekliyor";
 
-            appointment.UserId = user.Id;
-            appointment.CreatedDate = DateTime.Now;
-            appointment.Status = "Beklemede";
-            appointment.IsApproved = false;
-
-            // ÇAKIŞMA KONTROLÜ - Aynı tarih/saat/antrenörde başka randevu var mı?
-            var conflict = await _context.Appointments
-                .AnyAsync(a => a.TrainerId == appointment.TrainerId
-                            && a.AppointmentDate == appointment.AppointmentDate
-                            && a.Status != "Reddedildi");
-
-            if (conflict)
-            {
-                TempData["Error"] = "Seçtiğiniz tarih ve saatte bu eğitmenin başka bir randevusu var!  Lütfen farklı bir saat seçiniz.";
-
-                ViewBag.Trainers = await _context.Trainers.Where(t => t.IsActive).ToListAsync();
-                ViewBag.Services = await _context.Services.Where(s => s.IsActive).ToListAsync();
-                return View(appointment);
-            }
-
-            // ANTRENÖR ÇALİŞMA SAATİ KONTROLÜ
-            var trainer = await _context.Trainers.FindAsync(appointment.TrainerId);
-            if (trainer != null && trainer.WorkStartTime.HasValue && trainer.WorkEndTime.HasValue)
-            {
-                var appointmentTime = appointment.AppointmentDate.TimeOfDay;
-                if (appointmentTime < trainer.WorkStartTime.Value || appointmentTime > trainer.WorkEndTime.Value)
+                if (appointment.AppointmentDate < DateTime.Now)
                 {
-                    TempData["Error"] = $"Seçilen saat eğitmenin çalışma saatleri dışında!  Çalışma saatleri: {trainer.WorkStartTime:hh\\:mm} - {trainer.WorkEndTime:hh\\:mm}";
+                    ModelState.AddModelError("", "Ge�mi� bir tarihe randevu alamazs�n�z.");
+                }
+                else
+                {
 
-                    ViewBag.Trainers = await _context.Trainers.Where(t => t.IsActive).ToListAsync();
-                    ViewBag.Services = await _context.Services.Where(s => s.IsActive).ToListAsync();
-                    return View(appointment);
+                    DateTime newStart = appointment.AppointmentDate;
+                    DateTime newEnd = newStart.AddMinutes(selectedService.Duration);
+
+       
+                    var existingAppointments = _context.Appointments
+                        .Include(a => a.Service)
+                        .Where(a => a.TrainerId == appointment.TrainerId && a.Status == "Onayland�")
+                        .ToList();
+
+                    Appointment? conflictingAppointment = null;
+
+                    foreach (var existing in existingAppointments)
+                    {
+                        DateTime existingStart = existing.AppointmentDate;
+                        DateTime existingEnd = existingStart.AddMinutes(existing.Service.Duration);
+
+                        if (newStart < existingEnd && existingStart < newEnd)
+                        {
+                            conflictingAppointment = existing; 
+                            break; 
+                        }
+                    }
+
+                    if (conflictingAppointment != null)
+                    {
+                        DateTime busyStart = conflictingAppointment.AppointmentDate;
+                        DateTime busyEnd = busyStart.AddMinutes(conflictingAppointment.Service.Duration);
+
+                        ModelState.AddModelError("", $"Se�ti�iniz saatte e�itmen dolu. (E�itmenin Dolu Oldu�u Aral�k: {busyStart:HH:mm} - {busyEnd:HH:mm}).");
+                    }
+                    else
+                    {
+                        _context.Appointments.Add(appointment);
+                        _context.SaveChanges();
+                        return RedirectToAction("MyAppointments");
+                    }
                 }
             }
 
-            if (ModelState.IsValid)
-            {
-                _context.Appointments.Add(appointment);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Randevu talebiniz oluşturuldu!  Eğitmen onayladıktan sonra kesinleşecektir.";
-                return RedirectToAction(nameof(MyAppointments));
-            }
+            var services = _context.Services.ToList();
+            ViewBag.Services = new SelectList(services, "Id", "Name");
+            ViewBag.ServicesList = services;
 
-            ViewBag.Trainers = await _context.Trainers.Where(t => t.IsActive).ToListAsync();
-            ViewBag.Services = await _context.Services.Where(s => s.IsActive).ToListAsync();
+            var trainers = _context.Trainers.Select(t => new { Id = t.Id, Name = t.Name, ServiceId = t.ServiceId }).ToList();
+            ViewBag.TrainersList = trainers;
+            ViewBag.Trainers = new SelectList(_context.Trainers, "Id", "Name");
+
             return View(appointment);
         }
 
-        // ============================================
-        // MEMBER: RANDEVULARIM LİSTESİ
-        // ============================================
-        [Authorize(Roles = "Member")]
-        public async Task<IActionResult> MyAppointments()
+        [HttpGet]
+        public IActionResult MyAppointments()
         {
-            var userEmail = User.FindFirstValue(ClaimTypes.Email);
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
 
-            if (user == null)
-            {
-                TempData["Error"] = "Kullanıcı bulunamadı! ";
-                return RedirectToAction("Login", "Account");
-            }
+            if (user == null) return RedirectToAction("Login", "Account");
 
-            var appointments = await _context.Appointments
+            var appointments = _context.Appointments
                 .Include(a => a.Trainer)
                 .Include(a => a.Service)
                 .Where(a => a.UserId == user.Id)
                 .OrderByDescending(a => a.AppointmentDate)
-                .ToListAsync();
+                .ToList();
 
             return View(appointments);
-        }
-
-        // ============================================
-        // TRAINER: GELEN RANDEVU TALEPLERİ
-        // ============================================
-        [Authorize(Roles = "Trainer")]
-        public async Task<IActionResult> TrainerAppointments()
-        {
-            var userEmail = User.FindFirstValue(ClaimTypes.Email);
-
-            // Trainer'ın User email'i ile Trainer tablosundaki email'i eşleştir
-            var trainer = await _context.Trainers
-                .FirstOrDefaultAsync(t => t.Email == userEmail);
-
-            if (trainer == null)
-            {
-                TempData["Error"] = "Eğitmen profili bulunamadı!";
-                return RedirectToAction("Index", "Home");
-            }
-
-            var appointments = await _context.Appointments
-                .Include(a => a.User)
-                .Include(a => a.Service)
-                .Where(a => a.TrainerId == trainer.Id)
-                .OrderByDescending(a => a.AppointmentDate)
-                .ToListAsync();
-
-            return View(appointments);
-        }
-
-        // ============================================
-        // TRAINER: RANDEVU ONAYLAMA
-        // ============================================
-        [HttpPost]
-        [Authorize(Roles = "Trainer")]
-        public async Task<IActionResult> ApproveAppointment(int id)
-        {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null)
-            {
-                TempData["Error"] = "Randevu bulunamadı!";
-                return RedirectToAction(nameof(TrainerAppointments));
-            }
-
-            appointment.IsApproved = true;
-            appointment.Status = "Onaylandı";
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Randevu başarıyla onaylandı! ";
-            return RedirectToAction(nameof(TrainerAppointments));
-        }
-
-        // ============================================
-        // TRAINER: RANDEVU REDDETME
-        // ============================================
-        [HttpPost]
-        [Authorize(Roles = "Trainer")]
-        public async Task<IActionResult> RejectAppointment(int id, string reason)
-        {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null)
-            {
-                TempData["Error"] = "Randevu bulunamadı!";
-                return RedirectToAction(nameof(TrainerAppointments));
-            }
-
-            appointment.IsApproved = false;
-            appointment.Status = "Reddedildi";
-            appointment.Notes = reason ?? "Uygun değil";
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Randevu reddedildi. ";
-            return RedirectToAction(nameof(TrainerAppointments));
-        }
-
-        // ============================================
-        // ADMIN: TÜM RANDEVULAR
-        // ============================================
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Index()
-        {
-            var appointments = await _context.Appointments
-                .Include(a => a.User)
-                .Include(a => a.Trainer)
-                .Include(a => a.Service)
-                .OrderByDescending(a => a.CreatedDate)
-                .ToListAsync();
-
-            return View(appointments);
-        }
-
-        // ============================================
-        // ADMIN:  RANDEVU SİLME
-        // ============================================
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var appointment = await _context.Appointments
-                .Include(a => a.User)
-                .Include(a => a.Trainer)
-                .Include(a => a.Service)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (appointment == null) return NotFound();
-
-            return View(appointment);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment != null)
-            {
-                _context.Appointments.Remove(appointment);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Randevu başarıyla silindi! ";
-            }
-            return RedirectToAction(nameof(Index));
         }
     }
 }

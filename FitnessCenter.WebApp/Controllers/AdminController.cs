@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using FitnessCenter.WebApp.Data;
 using FitnessCenter.WebApp.Models;
 using System.Linq;
 
 namespace FitnessCenter.WebApp.Controllers
 {
-    // BU SATIR ÇOK ÖNEMLÝ: Sadece Rolü 'Admin' olanlar buraya girebilir!
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
@@ -17,85 +18,122 @@ namespace FitnessCenter.WebApp.Controllers
             _context = context;
         }
 
-        // Admin Ana Sayfasý (Dashboard)
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
 
-        // Tüm Üyeleri Listeleme Sayfasý
+
         public IActionResult Users()
         {
-            var users = _context.Users.ToList();
-            return View(users);
+            return View(_context.Users.ToList());
         }
 
-        // Eðitmenleri Listeleme Sayfasý (Burada ekle/sil yapacaðýz)
         public IActionResult Trainers()
         {
-            var trainers = _context.Trainers.ToList();
-            return View(trainers);
+            return View(_context.Trainers.ToList());
         }
-        // --- EÐÝTMEN EKLEME (Sayfayý Getir) ---
+
+        public IActionResult Services()
+        {
+            return View(_context.Services.ToList());
+        }
+
+        public IActionResult Appointments()
+        {
+            var appointments = _context.Appointments
+                .Include(a => a.User)
+                .Include(a => a.Trainer)
+                .Include(a => a.Service)
+                .OrderByDescending(a => a.AppointmentDate)
+                .ToList();
+            return View(appointments);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteAppointment(int id)
+        {
+            var appointment = _context.Appointments.Find(id);
+            if (appointment != null)
+            {
+                _context.Appointments.Remove(appointment);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Appointments");
+        }
+
+       
         [HttpGet]
         public IActionResult CreateTrainer()
         {
+            ViewBag.Services = new SelectList(_context.Services, "Id", "Name");
             return View();
         }
 
-        // --- EÐÝTMEN EKLEME (Kaydet) ---
         [HttpPost]
         public IActionResult CreateTrainer(Trainer trainer)
         {
+            
+            ModelState.Remove("ImageUrl");
+
             if (ModelState.IsValid)
             {
+               
+                if (_context.Users.Any(u => u.Email == trainer.Email))
+                {
+                    ModelState.AddModelError("", "Bu e-posta adresi zaten kullanýmda.");
+                    ViewBag.Services = new SelectList(_context.Services, "Id", "Name");
+                    return View(trainer);
+                }
+
+               
+                if (string.IsNullOrEmpty(trainer.ImageUrl))
+                {
+                    trainer.ImageUrl = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+                }
+
+               
+                var service = _context.Services.Find(trainer.ServiceId);
+                trainer.Speciality = service?.Name ?? "Genel";
+
+               
                 _context.Trainers.Add(trainer);
+
+               
+                var newUser = new User
+                {
+                    FullName = trainer.Name,
+                    Email = trainer.Email,
+                    Password = "123",
+                    Role = "Trainer"
+                };
+                _context.Users.Add(newUser);
+
                 _context.SaveChanges();
                 return RedirectToAction("Trainers");
             }
+
+            ViewBag.Services = new SelectList(_context.Services, "Id", "Name");
             return View(trainer);
         }
 
-        // --- EÐÝTMEN SÝLME ---
         [HttpPost]
         public IActionResult DeleteTrainer(int id)
         {
             var trainer = _context.Trainers.Find(id);
             if (trainer != null)
             {
+                
+                var user = _context.Users.FirstOrDefault(u => u.Email == trainer.Email);
+                if (user != null) _context.Users.Remove(user);
+
                 _context.Trainers.Remove(trainer);
                 _context.SaveChanges();
             }
             return RedirectToAction("Trainers");
         }
 
-        // Üye Silme Ýþlemi
-        [HttpPost]
-        public IActionResult DeleteUser(int id)
-        {
-            var user = _context.Users.Find(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                _context.SaveChanges();
-            }
-            return RedirectToAction("Users");
-        }
-        // --- HÝZMET LÝSTELEME ---
-        public IActionResult Services()
-        {
-            var services = _context.Services.ToList();
-            return View(services);
-        }
-
-        // --- HÝZMET EKLEME (Sayfa) ---
+       
         [HttpGet]
-        public IActionResult CreateService()
-        {
-            return View();
-        }
+        public IActionResult CreateService() => View();
 
-        // --- HÝZMET EKLEME (Ýþlem) ---
         [HttpPost]
         public IActionResult CreateService(Service service)
         {
@@ -108,7 +146,26 @@ namespace FitnessCenter.WebApp.Controllers
             return View(service);
         }
 
-        // --- HÝZMET SÝLME ---
+        [HttpGet]
+        public IActionResult EditService(int id)
+        {
+            var service = _context.Services.Find(id);
+            if (service == null) return NotFound();
+            return View(service);
+        }
+
+        [HttpPost]
+        public IActionResult EditService(Service service)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Services.Update(service);
+                _context.SaveChanges();
+                return RedirectToAction("Services");
+            }
+            return View(service);
+        }
+
         [HttpPost]
         public IActionResult DeleteService(int id)
         {
@@ -121,5 +178,26 @@ namespace FitnessCenter.WebApp.Controllers
             return RedirectToAction("Services");
         }
 
+        
+        [HttpPost]
+        public IActionResult DeleteUser(int id)
+        {
+            var userToDelete = _context.Users.Find(id);
+            var currentUserEmail = User.Identity.Name;
+
+            if (userToDelete != null)
+            {
+                
+                if (userToDelete.Email == currentUserEmail)
+                {
+                    TempData["Error"] = "Güvenlik gereði kendi hesabýnýzý silemezsiniz!";
+                    return RedirectToAction("Users");
+                }
+
+                _context.Users.Remove(userToDelete);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Users");
+        }
     }
 }
