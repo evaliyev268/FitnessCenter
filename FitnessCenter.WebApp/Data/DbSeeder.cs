@@ -54,7 +54,38 @@ namespace FitnessCenter.WebApp.Data
 
                     context.Trainers.AddRange(trainers);
                 }
-
+                if (!context.Services.Any())
+                {
+                    var services = new List<Service>
+                    {
+                        new Service
+                        {
+                            Name = "Fitness Üyeliði (Aylýk)",
+                            Description = "Tüm aletlere sýnýrsýz eriþim.",
+                            Duration = 30, // Günlük ortalama süre gibi düþünülebilir
+                            Price = 1500,
+                            ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500"
+                        },
+                        new Service
+                        {
+                            Name = "Özel Yoga Dersi",
+                            Description = "Eðitmen eþliðinde birebir yoga.",
+                            Duration = 60,
+                            Price = 750,
+                            ImageUrl = "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500"
+                        },
+                        new Service
+                        {
+                            Name = "Pilates Reformer",
+                            Description = "Aletli pilates ile duruþ bozukluðu düzeltme.",
+                            Duration = 50,
+                            Price = 900,
+                            ImageUrl = "https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=500"
+                        }
+                    };
+                    context.Services.AddRange(services);
+                }
+                // ---------------------------------------
                 // Deðiþiklikleri Kaydet
                 context.SaveChanges();
             }

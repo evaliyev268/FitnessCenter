@@ -11,5 +11,7 @@ namespace FitnessCenter.WebApp.Data
 
         public DbSet<User> Users { get; set; } // Kullanýcýlar tablosu
         public DbSet<Trainer> Trainers { get; set; } // Eðitmenler tablosu
+        public DbSet<Service> Services { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
     }
 }

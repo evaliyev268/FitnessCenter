@@ -1,0 +1,41 @@
+@model FitnessCenter.WebApp.Models.Appointment
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark fw-bold text-center">
+                    <h3><i class="fas fa-calendar-check"></i> Randevu Oluþtur</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Eðitmen Seçiniz</label>
+                            <select asp-for="TrainerId" class="form-select" asp-items="ViewBag.Trainers">
+                                <option value="">-- Bir Eðitmen Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Hizmet Seçiniz</label>
+                            <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.Services">
+                                <option value="">-- Bir Hizmet Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tarih ve Saat</label>
+                            <input asp-for="AppointmentDate" class="form-control" type="datetime-local"
+                                   min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark btn-lg">Randevuyu Onayla</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

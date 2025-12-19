@@ -81,5 +81,45 @@ namespace FitnessCenter.WebApp.Controllers
             }
             return RedirectToAction("Users");
         }
+        // --- HÝZMET LÝSTELEME ---
+        public IActionResult Services()
+        {
+            var services = _context.Services.ToList();
+            return View(services);
+        }
+
+        // --- HÝZMET EKLEME (Sayfa) ---
+        [HttpGet]
+        public IActionResult CreateService()
+        {
+            return View();
+        }
+
+        // --- HÝZMET EKLEME (Ýþlem) ---
+        [HttpPost]
+        public IActionResult CreateService(Service service)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Services.Add(service);
+                _context.SaveChanges();
+                return RedirectToAction("Services");
+            }
+            return View(service);
+        }
+
+        // --- HÝZMET SÝLME ---
+        [HttpPost]
+        public IActionResult DeleteService(int id)
+        {
+            var service = _context.Services.Find(id);
+            if (service != null)
+            {
+                _context.Services.Remove(service);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Services");
+        }
+
     }
 }
