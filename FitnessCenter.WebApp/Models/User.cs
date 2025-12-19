@@ -6,5 +6,6 @@ namespace FitnessCenter.WebApp.Models
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty; // Normalde þifrelenir ama ödev için böyle kalsýn
+        public string Role { get; set; } = "Member";
     }
 }

@@ -10,7 +10,6 @@ namespace FitnessCenter.WebApp.Controllers
     {
         private readonly AppDbContext _context;
 
-        // Veri tabanı bağlantısını buraya çağırıyoruz (Dependency Injection)
         public AccountController(AppDbContext context)
         {
             _context = context;
@@ -28,26 +27,24 @@ namespace FitnessCenter.WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                // 1. E-posta daha önce alınmış mı kontrol et
                 if (_context.Users.Any(u => u.Email == model.Email))
                 {
                     ModelState.AddModelError("", "Bu e-posta adresi zaten kayıtlı.");
                     return View(model);
                 }
 
-                // 2. Yeni kullanıcıyı oluştur
                 var newUser = new User
                 {
                     FullName = model.FullName,
                     Email = model.Email,
-                    Password = model.Password // Not: Gerçek projede şifreler hashlenmelidir!
+                    Password = model.Password,
+                    Role = "Member" // Varsayılan olarak Üye
                 };
 
-                // 3. Veri tabanına ekle ve kaydet
                 _context.Users.Add(newUser);
                 _context.SaveChanges();
 
-                return RedirectToAction("Login"); // Kayıttan sonra giriş sayfasına git
+                return RedirectToAction("Login");
             }
             return View(model);
         }
@@ -62,28 +59,26 @@ namespace FitnessCenter.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            // 1. Kullanıcıyı veri tabanında ara
             var user = _context.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
 
             if (user != null)
             {
-                // 2. Kullanıcı bulunduysa, kimlik bilgilerini hazırla (Cookie oluşturma)
+                // Kimlik bilgilerini hazırla (Adı, E-postası ve ROLÜ)
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.FullName),
-                    new Claim(ClaimTypes.Email, user.Email)
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role) // Burası Admin kontrolü için önemli
                 };
 
                 var userIdentity = new ClaimsIdentity(claims, "CookieAuth");
                 var principal = new ClaimsPrincipal(userIdentity);
 
-                // 3. Sisteme giriş yap
                 await HttpContext.SignInAsync("CookieAuth", principal);
 
                 return RedirectToAction("Index", "Home");
             }
 
-            // Hatalı giriş
             ViewBag.Error = "E-posta veya şifre hatalı.";
             return View();
         }

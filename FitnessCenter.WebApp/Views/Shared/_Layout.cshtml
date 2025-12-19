@@ -1,8 +1,4 @@
 ﻿<!DOCTYPE html>
-<<<<<<< Updated upstream
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-=======
->>>>>>> Stashed changes
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
@@ -31,33 +27,32 @@
                             <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">Programlar</a>
                         </li>
                         <li class="nav-item">
-<<<<<<< Updated upstream
-                            <a class="nav-link text-white" href="#">Eğitmenler</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-warning fw-bold" href="#">Üye Ol</a>
-                        </li>
-=======
                             <a class="nav-link text-white" asp-controller="Trainers" asp-action="Index">Eğitmenler</a>
                         </li>
 
                         @if (User.Identity.IsAuthenticated)
-                        {
+    {
+                        if (User.IsInRole("Admin"))
+        {
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-danger text-white px-3 me-3" asp-controller="Admin" asp-action="Index">YÖNETİCİ PANELİ</a>
+                        </li>
+        }
+
                         <li class="nav-item ms-auto d-flex align-items-center">
                             <span class="text-warning fw-bold me-3">
                                 <i class="fas fa-user-circle"></i> Merhaba, @User.Identity.Name
                             </span>
                             <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
                         </li>
-                        }
-                        else
-                        {
+    }
+    else
+    {
                         <li class="nav-item ms-auto">
                             <a class="nav-link text-white d-inline-block me-2" asp-controller="Account" asp-action="Login">Giriş Yap</a>
                             <a class="btn btn-warning fw-bold text-dark" asp-controller="Account" asp-action="Register">Üye Ol</a>
                         </li>
-                        }
->>>>>>> Stashed changes
+    }
                     </ul>
                 </div>
             </div>
