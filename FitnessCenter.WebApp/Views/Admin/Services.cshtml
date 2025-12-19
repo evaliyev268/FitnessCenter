@@ -1,0 +1,40 @@
+@model List<FitnessCenter.WebApp.Models.Service>
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between mb-4">
+            <h2>Hizmet Yönetimi</h2>
+            <a asp-action="CreateService" class="btn btn-primary"><i class="fas fa-plus"></i> Yeni Hizmet Ekle</a>
+        </div>
+
+        <table class="table table-bordered bg-white shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>Hizmet Adý</th>
+                    <th>Süre</th>
+                    <th>Saatler</th>
+                    <th>Fiyat</th>
+                    <th>Ýþlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Duration dk</td>
+                    <td><span class="badge bg-info text-dark">@item.WorkingHours</span></td>
+                    <td>@item.Price TL</td>
+                    <td>
+                        <a asp-action="EditService" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-2">
+                            <i class="fas fa-edit"></i> Düzenle
+                        </a>
+                        <form asp-action="DeleteService" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Silmek istediðine emin misin?');">
+                            <button class="btn btn-sm btn-danger">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <a asp-action="Index" class="btn btn-secondary">&larr; Geri Dön</a>
+    </div>

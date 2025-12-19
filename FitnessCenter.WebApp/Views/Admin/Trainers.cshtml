@@ -1,0 +1,40 @@
+@model List<FitnessCenter.WebApp.Models.Trainer>
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Eðitmen Yönetimi</h2>
+            <a asp-action="CreateTrainer" class="btn btn-success"><i class="fas fa-plus"></i> Yeni Eðitmen Ekle</a>
+        </div>
+
+        <table class="table table-bordered shadow-sm bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th>Resim</th>
+                    <th>Ad Soyad</th>
+                    <th>E-Posta</th>
+                    <th>Branþ</th>
+                    <th>Ýþlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var trainer in Model)
+            {
+                <tr>
+                    <td>
+                        <img src="@trainer.ImageUrl" width="50" height="50" class="rounded-circle" style="object-fit:cover;">
+                    </td>
+                    <td class="align-middle fw-bold">@trainer.Name</td>
+                    <td class="align-middle">@trainer.Email</td>
+                    <td class="align-middle"><span class="badge bg-info text-dark">@trainer.Speciality</span></td>
+
+                    <td class="align-middle">
+                        <form asp-action="DeleteTrainer" asp-route-id="@trainer.Id" method="post" class="d-inline" onsubmit="return confirm('Eðitmeni sildiðinizde giriþ yetkisi de silinecek. Emin misiniz?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <a asp-action="Index" class="btn btn-secondary mt-3">&larr; Panele Dön</a>
+    </div>
