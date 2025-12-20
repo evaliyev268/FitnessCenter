@@ -1,0 +1,35 @@
+@model List<FitnessCenter.WebApp.Models.Service>
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between mb-4">
+            <h2>Hizmet Yönetimi</h2>
+            <a asp-action="CreateService" class="btn btn-primary"><i class="fas fa-plus"></i> Yeni Hizmet Ekle</a>
+        </div>
+
+        <table class="table table-bordered bg-white shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>Hizmet Adý</th>
+                    <th>Süre (Dk)</th>
+                    <th>Fiyat</th>
+                    <th>Ýþlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Duration dk</td>
+                    <td>@item.Price TL</td>
+                    <td>
+                        <form asp-action="DeleteService" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Silmek istediðine emin misin?');">
+                            <button class="btn btn-sm btn-danger">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <a asp-action="Index" class="btn btn-secondary">&larr; Geri Dön</a>
+    </div>
