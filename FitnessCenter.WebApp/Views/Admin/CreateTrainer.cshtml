@@ -1,0 +1,43 @@
+@model FitnessCenter.WebApp.Models.Trainer
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Yeni Eðitmen Ekle</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateTrainer" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ad Soyad</label>
+                            <input asp-for="Name" class="form-control" required placeholder="Örn: Ahmet Yýlmaz" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">E-Posta (Giriþ Ýçin)</label>
+                            <input asp-for="Email" type="email" class="form-control" required placeholder="ornek@fitness.com" />
+                            <small class="text-muted">Eðitmen bu mail ve '123' þifresiyle sisteme girebilecek.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Verdiði Hizmet (Branþ)</label>
+                            <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.Services" required>
+                                <option value="">-- Bir Hizmet Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Resim URL <span class="text-muted fw-normal">(Ýsteðe Baðlý)</span></label>
+                            <input asp-for="ImageUrl" class="form-control" placeholder="Boþ býrakýrsanýz varsayýlan resim atanýr." />
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Kaydet</button>
+                    </form>
+                </div>
+            </div>
+            <a asp-action="Trainers" class="btn btn-link mt-2 text-muted">Ýptal</a>
+        </div>
+    </div>
+</div>

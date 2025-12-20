@@ -1,0 +1,43 @@
+@model FitnessCenter.WebApp.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Üye Ol";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-dark text-white text-center py-3">
+                <h3 class="mb-0 fw-bold"><i class="fas fa-user-plus text-warning"></i> ARAMIZA KATIL</h3>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Register" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ad Soyad</label>
+                        <input asp-for="FullName" class="form-control" placeholder="Adýnýz Soyadýnýz" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">E-Posta</label>
+                        <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Þifre</label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Þifre Tekrar</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 fw-bold py-2 mt-2">KAYIT OL</button>
+                </form>
+            </div>
+            <div class="card-footer text-center bg-white border-0 pb-4">
+                <small>Zaten üye misin? <a asp-controller="Account" asp-action="Login" class="text-warning fw-bold">Giriþ Yap</a></small>
+            </div>
+        </div>
+    </div>
+</div>

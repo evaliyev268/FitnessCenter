@@ -1,0 +1,69 @@
+using FitnessCenter.WebApp.Models;
+
+namespace FitnessCenter.WebApp.Data
+{
+    public static class DbSeeder
+    {
+        public static void Seed(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.EnsureCreated();
+
+                string adminEmail = "b231210553@sakarya.edu.tr";
+                if (!context.Users.Any(u => u.Email == adminEmail))
+                {
+                    context.Users.Add(new User { FullName = "Sistem Yöneticisi", Email = adminEmail, Password = "sau", Role = "Admin" });
+                    context.SaveChanges();
+                }
+                var trainerUsers = new List<User>
+                {
+                    new User { FullName = "Yusuf Hoca", Email = "yusuf@fitness.com", Password = "123", Role = "Trainer" },
+                    new User { FullName = "Þahin Hoca", Email = "sahin@fitness.com", Password = "123", Role = "Trainer" },
+                    new User { FullName = "Okan Hoca",  Email = "okan@fitness.com",  Password = "123", Role = "Trainer" }
+                };
+
+                foreach (var tUser in trainerUsers)
+                {
+                    if (!context.Users.Any(u => u.Email == tUser.Email))
+                    {
+                        context.Users.Add(tUser);
+                    }
+                }
+                context.SaveChanges();
+
+                if (!context.Services.Any())
+                {
+                    var services = new List<Service>
+                    {
+                        new Service { Name = "Fitness", Description="Birebir Fitness", Duration = 60, Price = 1500, WorkingHours="07:00 - 23:00", ImageUrl="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500" },
+                        new Service { Name = "Yoga", Description="Rahatlatýcý Yoga", Duration = 50, Price = 800, WorkingHours="10:00 - 18:00", ImageUrl="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500" },
+                        new Service { Name = "Crossfit", Description="Yüksek Yoðunluklu", Duration = 45, Price = 1200, WorkingHours="12:00 - 20:00", ImageUrl="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500" }
+                    };
+                    context.Services.AddRange(services);
+                    context.SaveChanges();
+                }
+
+                if (!context.Trainers.Any())
+                {
+                    var fitness = context.Services.FirstOrDefault(s => s.Name == "Fitness");
+                    var yoga = context.Services.FirstOrDefault(s => s.Name == "Yoga");
+                    var crossfit = context.Services.FirstOrDefault(s => s.Name == "Crossfit");
+
+                    if (fitness != null && yoga != null && crossfit != null)
+                    {
+                        var trainers = new List<Trainer>
+                        {
+                            new Trainer { Name = "Yusuf Ziya Gök", Email="yusuf@fitness.com", Speciality = "Vücut Geliþtirme", ImageUrl = "https://randomuser.me/api/portraits/men/32.jpg", ServiceId = fitness.Id },
+                            new Trainer { Name = "Þahin Baðcý", Email="sahin@fitness.com", Speciality = "Pilates & Yoga", ImageUrl = "https://randomuser.me/api/portraits/men/59.jpg", ServiceId = yoga.Id },
+                            new Trainer { Name = "Okan Koca", Email="okan@fitness.com", Speciality = "Crossfit", ImageUrl = "https://randomuser.me/api/portraits/men/85.jpg", ServiceId = crossfit.Id }
+                        };
+                        context.Trainers.AddRange(trainers);
+                        context.SaveChanges();
+                    }
+                }
+            }
+        }
+    }
+}

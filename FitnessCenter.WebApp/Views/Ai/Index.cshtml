@@ -1,0 +1,315 @@
+﻿@{
+    ViewData["Title"] = "ElBot AI Asistan";
+}
+
+<style>
+    .chat-container {
+        height: 750px;
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid #ddd;
+    }
+
+    .chat-header {
+        background: linear-gradient(135deg, #ffc107, #ff9800);
+        color: #fff;
+        padding: 15px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .chat-box {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background-color: #f0f2f5; 
+    }
+
+    .message {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 15px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        position: relative;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .message-bot {
+        align-self: flex-start;
+        background-color: #ffffff;
+        border-top-left-radius: 0;
+        color: #333;
+    }
+
+    .message-user {
+        align-self: flex-end;
+        background-color: #dcf8c6;
+        border-top-right-radius: 0;
+        color: #000;
+    }
+
+    .chat-input-area {
+        padding: 15px;
+        background-color: #fff;
+        border-top: 1px solid #ddd;
+        display: flex;
+        flex-direction: column; 
+        gap: 10px;
+    }
+
+    .input-settings {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #f1f1f1;
+    }
+
+    .input-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .bot-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        margin-right: 12px;
+        background-color: #fff;
+        padding: 2px;
+        border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    .chat-image {
+        width: 100%;
+        border-radius: 10px;
+        margin-top: 10px;
+        border: 3px solid #ffc107;
+    }
+
+    .preview-image {
+        max-width: 200px;
+        border-radius: 10px;
+        border: 2px solid #28a745;
+    }
+
+    .gender-label {
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 20px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+    }
+
+    .form-check-input:checked + .gender-label {
+        background-color: #fffae6;
+        border-color: #ffc107;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mt-4 pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="chat-container shadow-lg">
+
+                <div class="chat-header">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" class="bot-avatar" />
+                    <div>
+                        <h5 class="mb-0">ElBot 🤖</h5>
+                        <small style="opacity: 0.9;">Fitness & Dönüşüm Asistanı</small>
+                    </div>
+                </div>
+
+                <div class="chat-box" id="chatBox">
+                    <div class="message message-bot">
+                        Merhaba! Ben <strong>ElBot</strong>. 👋<br><br>
+                        Senin için <strong>Kişiye Özel Antrenman Programı</strong> hazırlayabilir ve ulaşabileceğin <strong>Hedef Fiziği</strong> çizebilirim.<br><br>
+                        👉 Lütfen aşağıdan <strong>Boy, Kilo ve Cinsiyet</strong> bilgilerini girip bir fotoğrafını yükle veya sorunu yaz.
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+
+                    <div class="input-settings">
+
+                        <div>
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input" type="radio" name="genderOptions" id="genderMale" value="Male" checked>
+                                <label class="form-check-label gender-label text-primary" for="genderMale"><i class="fas fa-mars"></i> Erkek</label>
+                            </div>
+                            <div class="form-check form-check-inline m-0">
+                                <input class="form-check-input" type="radio" name="genderOptions" id="genderFemale" value="Female">
+                                <label class="form-check-label gender-label text-danger" for="genderFemale"><i class="fas fa-venus"></i> Kadın</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="fas fa-ruler-vertical text-muted"></i></span>
+                                <input type="number" id="userHeight" class="form-control" placeholder="Boy (cm)" style="width: 70px;">
+                            </div>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white"><i class="fas fa-weight text-muted"></i></span>
+                                <input type="number" id="userWeight" class="form-control" placeholder="Kilo (kg)" style="width: 70px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-actions">
+                        <input type="file" id="imageInput" accept="image/*" style="display: none;" />
+
+                        <button class="btn btn-outline-secondary rounded-circle" onclick="document.getElementById('imageInput').click()" title="Fotoğraf Ekle">
+                            <i class="fas fa-camera"></i>
+                        </button>
+
+                        <input type="text" id="messageInput" class="form-control rounded-pill" placeholder="Hedefim ne olmalı? / Program yazar mısın?" />
+
+                        <button class="btn btn-warning rounded-circle text-white shadow-sm" onclick="sendMessage()" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $("#imageInput").change(function () {
+            if (this.files.length > 0) {
+                var fileName = this.files[0].name;
+                $("#messageInput").val("📸 Fotoğraf seçildi: " + fileName);
+                $("#messageInput").prop("disabled", true);
+                $("#sendBtn").removeClass("btn-warning").addClass("btn-success");
+            }
+        });
+
+        $("#messageInput").keypress(function (e) {
+            if (e.which == 13 && !$("#messageInput").prop("disabled")) sendMessage();
+        });
+
+        function sendMessage() {
+            var message = $("#messageInput").val();
+            var height = $("#userHeight").val();
+            var weight = $("#userWeight").val();
+            var fileInput = $("#imageInput")[0];
+            var file = fileInput.files[0];
+            var selectedGender = $("input[name='genderOptions']:checked").val();
+
+            if (!height || !weight) {
+                alert("Lütfen Boy ve Kilo bilgilerinizi giriniz! Yapay zeka buna göre analiz yapacaktır.");
+                return;
+            }
+
+            if (message.trim() === "" && !file) return;
+
+            var userHtml = '';
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    userHtml = '<div class="message message-user text-end">';
+                    userHtml += '<img src="' + e.target.result + '" class="preview-image shadow-sm" /><br>';
+                    userHtml += '<div class="mt-1 small text-muted"><i class="fas fa-sync fa-spin"></i> Analiz Başlıyor...</div>';
+                    userHtml += '</div>';
+                    appendMessageAndSend(userHtml, message, file, selectedGender, height, weight);
+                }
+                reader.readAsDataURL(file);
+            } else {
+                userHtml = '<div class="message message-user">' + message + '</div>';
+                appendMessageAndSend(userHtml, message, file, selectedGender, height, weight);
+            }
+        }
+
+        function appendMessageAndSend(userHtml, message, file, selectedGender, height, weight) {
+            $("#chatBox").append(userHtml);
+            scrollToBottom();
+
+            $("#messageInput").val("");
+            $("#imageInput").val("");
+            $("#messageInput").prop("disabled", true);
+            $("#sendBtn").prop("disabled", true);
+            $("#sendBtn").removeClass("btn-success").addClass("btn-warning");
+
+            var formData = new FormData();
+            formData.append("message", message);
+            formData.append("gender", selectedGender);
+            formData.append("height", height);
+            formData.append("weight", weight);
+            if (file) formData.append("imageFile", file);
+
+            var typingId = "typing-" + Date.now();
+            var loadingHtml = '<div id="' + typingId + '" class="message message-bot text-muted">';
+            loadingHtml += '<div class="d-flex align-items-center">';
+            loadingHtml += '<div class="spinner-border text-warning me-2" role="status" style="width: 1.5rem; height: 1.5rem;"></div>';
+            loadingHtml += '<div><strong>ElBot:</strong> Verilerini işliyorum...<br><small>Program yazılıyor & Resim çiziliyor 🎨</small></div>';
+            loadingHtml += '</div></div>';
+
+            $("#chatBox").append(loadingHtml);
+            scrollToBottom();
+
+            $.ajax({
+                url: '/Ai/Chat',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                timeout: 60000,
+                success: function (response) {
+                    $("#" + typingId).remove();
+
+                    var botHtml = '<div class="message message-bot">';
+
+                    if (response.isImage && response.imageUrl) {
+                        botHtml += '<h5 class="text-success fw-bold mb-2"><i class="fas fa-clipboard-check"></i> ANALİZ RAPORUN</h5>';
+                        botHtml += response.reply.replace(/\n/g, "<br>");
+                        botHtml += '<hr class="my-3">';
+                        botHtml += '<div class="text-center">';
+                        botHtml += '<img src="' + response.imageUrl + '" class="chat-image shadow-lg">';
+                        botHtml += '<div class="mt-2 small text-muted fw-bold">👆 Senin Vücut Tipine Uygun Hedef Fizik</div>';
+                        botHtml += '</div>';
+                    } else {
+                        botHtml += response.reply.replace(/\n/g, "<br>");
+                    }
+
+                    botHtml += '</div>';
+                    $("#chatBox").append(botHtml);
+
+                    enableControls();
+                    scrollToBottom();
+                },
+                error: function (xhr) {
+                    $("#" + typingId).remove();
+                    $("#chatBox").append('<div class="message message-bot text-danger">Bir hata oluştu.</div>');
+                    enableControls();
+                    scrollToBottom();
+                }
+            });
+        }
+
+        function enableControls() {
+            $("#messageInput").prop("disabled", false);
+            $("#sendBtn").prop("disabled", false);
+            $("#messageInput").focus();
+        }
+
+        function scrollToBottom() {
+            var chatBox = document.getElementById("chatBox");
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+}

@@ -1,0 +1,31 @@
+﻿@model List<FitnessCenter.WebApp.Models.Service>
+    @{ ViewData["Title"] = "Hizmetlerimiz"; }
+
+    <div class="container mt-5">
+        <div class="text-center mb-5">
+            <h2 class="display-4 fw-bold">HİZMETLERİMİZ</h2>
+            <p class="text-muted">Size özel sunduğumuz ayrıcalıklı programlar</p>
+        </div>
+
+        <div class="row">
+            @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow border-0 hover-effect">
+                    <img src="@item.ImageUrl" class="card-img-top" style="height: 250px; object-fit: cover;" alt="@item.Name">
+                    <div class="card-body text-center">
+                        <h4 class="card-title fw-bold">@item.Name</h4>
+                        <p class="card-text text-muted">@item.Description</p>
+
+                        <div class="mb-3 text-info fw-bold">
+                            <i class="fas fa-clock"></i> @item.WorkingHours
+                        </div>
+
+                        <hr />
+                        <h5 class="text-primary fw-bold">@item.Price TL <small class="text-muted">/ @item.Duration dk</small></h5>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </div>

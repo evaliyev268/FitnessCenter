@@ -1,0 +1,96 @@
+@model FitnessCenter.WebApp.Models.Appointment
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+            <div class="alert alert-danger" asp-validation-summary="All"></div>
+            }
+
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-warning text-dark fw-bold text-center">
+                    <h3><i class="fas fa-calendar-check"></i> Randevu Oluþtur</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Hizmet Seçiniz</label>
+                            <select asp-for="ServiceId" id="ServiceSelect" class="form-select" asp-items="ViewBag.Services" required>
+                                <option value="">-- Bir Hizmet Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div id="ServiceInfo" class="alert alert-info d-none">
+                            <div class="d-flex justify-content-between">
+                                <span><i class="fas fa-clock"></i> Süre: <strong id="DurationText">- dk</strong></span>
+                                <span><i class="fas fa-tag"></i> Ücret: <strong id="PriceText">- TL</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Eðitmen Seçiniz</label>
+                            <select asp-for="TrainerId" id="TrainerSelect" class="form-select" disabled required>
+                                <option value="">-- Önce Hizmet Seçiniz --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tarih ve Saat</label>
+                            <input asp-for="AppointmentDate" class="form-control" type="datetime-local"
+                                   min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" required />
+                            <small class="text-muted">Seçtiðiniz hizmet süresi kadar eðitmen meþgul olacaktýr.</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark btn-lg">Randevuyu Onayla</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var allTrainers = @Html.Raw(Json.Serialize(ViewBag.TrainersList));
+        var allServices = @Html.Raw(Json.Serialize(ViewBag.ServicesList));
+
+        $(document).ready(function () {
+
+            $("#ServiceSelect").change(function () {
+                var selectedServiceId = $(this).val();
+                var trainerSelect = $("#TrainerSelect");
+                var serviceInfoBox = $("#ServiceInfo");
+
+                trainerSelect.empty();
+                trainerSelect.append('<option value="">-- Eðitmen Seçin --</option>');
+
+                if (selectedServiceId) {
+                    var selectedService = allServices.find(s => s.id == selectedServiceId);
+
+                    if(selectedService) {
+                        $("#DurationText").text(selectedService.duration + " dk");
+                        $("#PriceText").text(selectedService.price + " TL");
+                        serviceInfoBox.removeClass("d-none");
+                    }
+
+
+                    var filteredTrainers = allTrainers.filter(t => t.serviceId == selectedServiceId);
+
+                    $.each(filteredTrainers, function (i, trainer) {
+                        trainerSelect.append('<option value="' + trainer.id + '">' + trainer.name + '</option>');
+                    });
+
+                    trainerSelect.prop("disabled", false); 
+                } else {
+                    trainerSelect.prop("disabled", true); 
+                    serviceInfoBox.addClass("d-none"); 
+                }
+            });
+        });
+    </script>
+}
