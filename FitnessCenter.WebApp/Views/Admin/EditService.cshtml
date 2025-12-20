@@ -2,19 +2,23 @@
 
 <div class="container mt-5 col-md-6">
     <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4>Yeni Hizmet Tanýmla</h4>
+        <div class="card-header bg-warning text-dark">
+            <h4>Hizmeti Düzenle</h4>
         </div>
         <div class="card-body">
-            <form asp-action="CreateService" method="post">
+            <form asp-action="EditService" method="post">
+                <input type="hidden" asp-for="Id" />
+
                 <div class="mb-3">
                     <label>Hizmet Adý</label>
-                    <input asp-for="Name" class="form-control" required placeholder="Örn: Yoga Seansý" />
+                    <input asp-for="Name" class="form-control" required />
                 </div>
+
                 <div class="mb-3">
                     <label>Çalýþma Saatleri</label>
-                    <input asp-for="WorkingHours" class="form-control" placeholder="Örn: 09:00 - 18:00" required />
+                    <input asp-for="WorkingHours" class="form-control" placeholder="Örn: 09:00 - 22:00" required />
                 </div>
+
                 <div class="mb-3">
                     <label>Süre (Dakika)</label>
                     <input asp-for="Duration" type="number" class="form-control" required />
@@ -27,8 +31,9 @@
                     <label>Resim URL</label>
                     <input asp-for="ImageUrl" class="form-control" />
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Kaydet</button>
+                <button type="submit" class="btn btn-warning w-100">Güncelle</button>
             </form>
         </div>
     </div>
+    <a asp-action="Services" class="btn btn-secondary mt-2">Ýptal</a>
 </div>

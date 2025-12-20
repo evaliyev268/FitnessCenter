@@ -1,31 +1,30 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using FitnessCenter.Models;
+using FitnessCenter.WebApp.Data;
+using System.Linq;
 
-namespace FitnessCenter.Controllers;
-
-public class HomeController : Controller
+namespace FitnessCenter.WebApp.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        private readonly AppDbContext _context;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        public HomeController(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        public IActionResult Index()
+        {
+            // Ana sayfada 'Uzman Kadromuz' kýsmýný göstermek için eðitmenleri gönderiyoruz
+            var trainers = _context.Trainers.ToList();
+            return View(trainers);
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        // Privacy SÝLÝNDÝ, yerine Services GELDÝ
+        public IActionResult Services()
+        {
+            var services = _context.Services.ToList();
+            return View(services);
+        }
     }
 }

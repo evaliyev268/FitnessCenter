@@ -23,24 +23,39 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Home" asp-action="Privacy">Programlar</a>
+                            <a class="nav-link text-white" asp-controller="Home" asp-action="Services">Hizmetler</a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Trainers" asp-action="Index">Eğitmenler</a>
                         </li>
 
                         @if (User.Identity.IsAuthenticated)
-    {
-                        if (User.IsInRole("Admin"))
-        {
+                        {
+                        if (User.IsInRole("Trainer"))
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-primary text-white px-3 me-3" asp-controller="Trainer" asp-action="Index">EĞİTMEN PANELİ</a>
+                        </li>
+                        }
+                            if (User.IsInRole("Admin"))
+                            {
                         <li class="nav-item">
                             <a class="nav-link btn btn-danger text-white px-3 me-3" asp-controller="Admin" asp-action="Index">YÖNETİCİ PANELİ</a>
                         </li>
-        }
+                            }
+
                         <li class="nav-item">
-                            <a class="nav-link btn btn-warning text-dark fw-bold px-3 me-3" asp-controller="Appointment" asp-action="Create">
+                            <a class="nav-link btn btn-warning text-dark fw-bold px-3 me-2" asp-controller="Appointment" asp-action="Create">
                                 RANDEVU AL
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-light px-3 me-3" asp-controller="Appointment" asp-action="MyAppointments">
+                                Randevularım
                             </a>
                         </li>
 
@@ -50,14 +65,14 @@
                             </span>
                             <a class="btn btn-outline-light btn-sm" asp-controller="Account" asp-action="Logout">Çıkış Yap</a>
                         </li>
-    }
-    else
-    {
+                        }
+                        else
+                        {
                         <li class="nav-item ms-auto">
                             <a class="nav-link text-white d-inline-block me-2" asp-controller="Account" asp-action="Login">Giriş Yap</a>
                             <a class="btn btn-warning fw-bold text-dark" asp-controller="Account" asp-action="Register">Üye Ol</a>
                         </li>
-    }
+                        }
                     </ul>
                 </div>
             </div>
@@ -72,7 +87,7 @@
 
     <footer class="border-top footer text-muted bg-dark">
         <div class="container text-white text-center py-3">
-            &copy; 2025 - Fitness Center - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-warning">Gizlilik</a>
+            &copy; 2025 - Fitness Center - <a asp-area="" asp-controller="Home" asp-action="Services" class="text-warning">Hizmetler</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

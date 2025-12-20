@@ -9,27 +9,30 @@
                 </div>
                 <div class="card-body">
                     <form asp-action="CreateTrainer" method="post">
+
                         <div class="mb-3">
-                            <label class="form-label">Ad Soyad</label>
-                            <input asp-for="Name" class="form-control" required />
+                            <label class="form-label fw-bold">Ad Soyad</label>
+                            <input asp-for="Name" class="form-control" required placeholder="Örn: Ahmet Yýlmaz" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Verdiði Hizmet (Branþ)</label>
+                            <label class="form-label fw-bold">E-Posta (Giriþ Ýçin)</label>
+                            <input asp-for="Email" type="email" class="form-control" required placeholder="ornek@fitness.com" />
+                            <small class="text-muted">Eðitmen bu mail ve '123' þifresiyle sisteme girebilecek.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Verdiði Hizmet (Branþ)</label>
                             <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.Services" required>
                                 <option value="">-- Bir Hizmet Seçin --</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Uzmanlýk Alaný (Görünür Yazý)</label>
-                            <input asp-for="Speciality" class="form-control" placeholder="Örn: Yoga, Pilates, Fitness" required />
+                            <label class="form-label fw-bold">Resim URL <span class="text-muted fw-normal">(Ýsteðe Baðlý)</span></label>
+                            <input asp-for="ImageUrl" class="form-control" placeholder="Boþ býrakýrsanýz varsayýlan resim atanýr." />
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Resim URL</label>
-                            <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
-                            <small class="text-muted">Ýnternetten bir resim linki yapýþtýrýn.</small>
-                        </div>
+
                         <button type="submit" class="btn btn-success w-100">Kaydet</button>
                     </form>
                 </div>

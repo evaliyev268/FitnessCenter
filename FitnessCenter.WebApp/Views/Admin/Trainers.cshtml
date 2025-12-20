@@ -11,7 +11,8 @@
                 <tr>
                     <th>Resim</th>
                     <th>Ad Soyad</th>
-                    <th>Uzmanlýk</th>
+                    <th>E-Posta</th>
+                    <th>Branþ</th>
                     <th>Ýþlemler</th>
                 </tr>
             </thead>
@@ -22,10 +23,12 @@
                     <td>
                         <img src="@trainer.ImageUrl" width="50" height="50" class="rounded-circle" style="object-fit:cover;">
                     </td>
-                    <td class="align-middle">@trainer.Name</td>
-                    <td class="align-middle">@trainer.Speciality</td>
+                    <td class="align-middle fw-bold">@trainer.Name</td>
+                    <td class="align-middle">@trainer.Email</td>
+                    <td class="align-middle"><span class="badge bg-info text-dark">@trainer.Speciality</span></td>
+
                     <td class="align-middle">
-                        <form asp-action="DeleteTrainer" asp-route-id="@trainer.Id" method="post" class="d-inline" onsubmit="return confirm('Silmek istediðine emin misin?');">
+                        <form asp-action="DeleteTrainer" asp-route-id="@trainer.Id" method="post" class="d-inline" onsubmit="return confirm('Eðitmeni sildiðinizde giriþ yetkisi de silinecek. Emin misiniz?');">
                             <button type="submit" class="btn btn-sm btn-danger">Sil</button>
                         </form>
                     </td>

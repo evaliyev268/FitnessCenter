@@ -3,6 +3,12 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+            <div class="alert alert-danger" asp-validation-summary="All"></div>
+            }
+
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-warning text-dark fw-bold text-center">
                     <h3><i class="fas fa-calendar-check"></i> Randevu Oluþtur</h3>
@@ -12,14 +18,21 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Hizmet Seçiniz</label>
-                            <select asp-for="ServiceId" id="ServiceSelect" class="form-select" asp-items="ViewBag.Services">
+                            <select asp-for="ServiceId" id="ServiceSelect" class="form-select" asp-items="ViewBag.Services" required>
                                 <option value="">-- Bir Hizmet Seçin --</option>
                             </select>
                         </div>
 
+                        <div id="ServiceInfo" class="alert alert-info d-none">
+                            <div class="d-flex justify-content-between">
+                                <span><i class="fas fa-clock"></i> Süre: <strong id="DurationText">- dk</strong></span>
+                                <span><i class="fas fa-tag"></i> Ücret: <strong id="PriceText">- TL</strong></span>
+                            </div>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label fw-bold">Eðitmen Seçiniz</label>
-                            <select asp-for="TrainerId" id="TrainerSelect" class="form-select" disabled>
+                            <select asp-for="TrainerId" id="TrainerSelect" class="form-select" disabled required>
                                 <option value="">-- Önce Hizmet Seçiniz --</option>
                             </select>
                         </div>
@@ -27,7 +40,8 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Tarih ve Saat</label>
                             <input asp-for="AppointmentDate" class="form-control" type="datetime-local"
-                                   min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                                   min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" required />
+                            <small class="text-muted">Seçtiðiniz hizmet süresi kadar eðitmen meþgul olacaktýr.</small>
                         </div>
 
                         <div class="d-grid gap-2">
@@ -42,32 +56,45 @@
 
 @section Scripts {
     <script>
-        // Controller'dan gelen tüm eðitmen listesini alýyoruz
+        // Controller'dan gelen verileri JavaScript deðiþkenine atýyoruz
         var allTrainers = @Html.Raw(Json.Serialize(ViewBag.TrainersList));
+        var allServices = @Html.Raw(Json.Serialize(ViewBag.ServicesList));
 
         $(document).ready(function () {
-            // Hizmet kutusu deðiþtiðinde çalýþýr
+
+            // Hizmet seçildiðinde çalýþýr
             $("#ServiceSelect").change(function () {
                 var selectedServiceId = $(this).val();
                 var trainerSelect = $("#TrainerSelect");
+                var serviceInfoBox = $("#ServiceInfo");
 
-                // Eðitmen kutusunu temizle
+                // Önceki seçimleri temizle
                 trainerSelect.empty();
                 trainerSelect.append('<option value="">-- Eðitmen Seçin --</option>');
 
                 if (selectedServiceId) {
-                    // Seçilen hizmet ID'sine sahip hocalarý filtrele
-                    // Not: Modeldeki property isimleri küçük harfle (camelCase) gelir (serviceId)
+                    // A. FÝYAT VE SÜREYÝ GÖSTER
+                    // Seçilen hizmetin detaylarýný bul
+                    var selectedService = allServices.find(s => s.id == selectedServiceId);
+
+                    if(selectedService) {
+                        $("#DurationText").text(selectedService.duration + " dk");
+                        $("#PriceText").text(selectedService.price + " TL");
+                        serviceInfoBox.removeClass("d-none"); // Kutuyu görünür yap
+                    }
+
+                    // B. EÐÝTMENLERÝ FÝLTRELE
+                    // Sadece o hizmeti verenleri getir
                     var filteredTrainers = allTrainers.filter(t => t.serviceId == selectedServiceId);
 
-                    // Hocalarý kutuya ekle
                     $.each(filteredTrainers, function (i, trainer) {
                         trainerSelect.append('<option value="' + trainer.id + '">' + trainer.name + '</option>');
                     });
 
-                    trainerSelect.prop("disabled", false); // Kutuyu aktif et
+                    trainerSelect.prop("disabled", false); // Kilidi aç
                 } else {
-                    trainerSelect.prop("disabled", true); // Hizmet seçilmezse pasif yap
+                    trainerSelect.prop("disabled", true); // Kilitle
+                    serviceInfoBox.addClass("d-none"); // Kutuyu gizle
                 }
             });
         });

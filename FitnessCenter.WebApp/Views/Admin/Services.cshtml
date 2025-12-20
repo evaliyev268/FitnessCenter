@@ -10,7 +10,8 @@
             <thead class="table-light">
                 <tr>
                     <th>Hizmet Adý</th>
-                    <th>Süre (Dk)</th>
+                    <th>Süre</th>
+                    <th>Saatler</th>
                     <th>Fiyat</th>
                     <th>Ýþlem</th>
                 </tr>
@@ -21,12 +22,12 @@
                 <tr>
                     <td>@item.Name</td>
                     <td>@item.Duration dk</td>
+                    <td><span class="badge bg-info text-dark">@item.WorkingHours</span></td>
                     <td>@item.Price TL</td>
                     <td>
                         <a asp-action="EditService" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-2">
                             <i class="fas fa-edit"></i> Düzenle
                         </a>
-
                         <form asp-action="DeleteService" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Silmek istediðine emin misin?');">
                             <button class="btn btn-sm btn-danger">Sil</button>
                         </form>
