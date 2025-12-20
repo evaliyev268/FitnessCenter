@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; // SelectList için gerekli
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FitnessCenter.WebApp.Data;
 using FitnessCenter.WebApp.Models;
-using System.Security.Claims; // Kullanýcý ID'sini bulmak için
+using System.Security.Claims;
 
 namespace FitnessCenter.WebApp.Controllers
 {
-    // Sadece giriþ yapanlar randevu alabilir
     [Microsoft.AspNetCore.Authorization.Authorize]
     public class AppointmentController : Controller
     {
@@ -22,9 +21,17 @@ namespace FitnessCenter.WebApp.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            // Dropdown (Seçim Kutularý) için verileri hazýrlýyoruz
-            ViewBag.Trainers = new SelectList(_context.Trainers, "Id", "Name");
             ViewBag.Services = new SelectList(_context.Services, "Id", "Name");
+
+            // DÜZELTME: Eðitmenleri ServiceId ile beraber gönderiyoruz ki JS filtreleyebilsin
+            var trainers = _context.Trainers.Select(t => new {
+                Id = t.Id,
+                Name = t.Name,
+                ServiceId = t.ServiceId
+            }).ToList();
+
+            ViewBag.TrainersList = trainers;
+
             return View();
         }
 
@@ -32,15 +39,13 @@ namespace FitnessCenter.WebApp.Controllers
         [HttpPost]
         public IActionResult Create(Appointment appointment)
         {
-            // Giriþ yapan kullanýcýnýn ID'sini bulma (Cookie'den)
             var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
             var user = _context.Users.FirstOrDefault(u => u.Email == userEmail);
 
             if (user != null)
             {
-                appointment.UserId = user.Id; // Randevuyu bu kullanýcýya ata
+                appointment.UserId = user.Id;
 
-                // Basit bir kontrol: Tarih geçmiþte mi?
                 if (appointment.AppointmentDate < DateTime.Now)
                 {
                     ModelState.AddModelError("", "Geçmiþ bir tarihe randevu alamazsýnýz.");
@@ -49,11 +54,10 @@ namespace FitnessCenter.WebApp.Controllers
                 {
                     _context.Appointments.Add(appointment);
                     _context.SaveChanges();
-                    return RedirectToAction("Index", "Home"); // Baþarýlýysa Ana Sayfaya
+                    return RedirectToAction("Index", "Home");
                 }
             }
 
-            // Hata varsa listeleri tekrar yükle
             ViewBag.Trainers = new SelectList(_context.Trainers, "Id", "Name");
             ViewBag.Services = new SelectList(_context.Services, "Id", "Name");
             return View(appointment);

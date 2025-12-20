@@ -13,8 +13,16 @@
                             <label class="form-label">Ad Soyad</label>
                             <input asp-for="Name" class="form-control" required />
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label">Uzmanlýk Alaný</label>
+                            <label class="form-label">Verdiði Hizmet (Branþ)</label>
+                            <select asp-for="ServiceId" class="form-select" asp-items="ViewBag.Services" required>
+                                <option value="">-- Bir Hizmet Seçin --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Uzmanlýk Alaný (Görünür Yazý)</label>
                             <input asp-for="Speciality" class="form-control" placeholder="Örn: Yoga, Pilates, Fitness" required />
                         </div>
                         <div class="mb-3">
