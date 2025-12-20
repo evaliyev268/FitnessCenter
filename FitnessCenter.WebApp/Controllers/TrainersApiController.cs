@@ -39,7 +39,7 @@ namespace FitnessCenter.WebApp.Controllers
         {
             if (string.IsNullOrEmpty(serviceName))
             {
-                return BadRequest("Lütfen bir hizmet adý girin.");
+                return BadRequest("LÃ¼tfen bir hizmet adÃ½ girin.");
             }
 
             var trainers = _context.Trainers
@@ -49,7 +49,7 @@ namespace FitnessCenter.WebApp.Controllers
                 {
                     Id = t.Id,
                     AdSoyad = t.Name,
-                    Branþ = t.Service.Name
+                    BranÃ¾ = t.Service.Name
                 })
                 .ToList();
 
