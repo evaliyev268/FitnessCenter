@@ -3,10 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using FitnessCenter.WebApp.Data;
 using System.Linq;
 
-namespace FitnessCenter.WebApp.Controllers // DÝKKAT: .Api kýsmýný sildik
+namespace FitnessCenter.WebApp.Controllers
 {
-    // Bu satýr sayesinde adres yine "api/trainersapi" þeklinde çalýþýr
-    [Route("api/[controller]")]
+    [Route("api/trainers")]
     [ApiController]
     public class TrainersApiController : ControllerBase
     {
@@ -17,7 +16,6 @@ namespace FitnessCenter.WebApp.Controllers // DÝKKAT: .Api kýsmýný sildik
             _context = context;
         }
 
-        // 1. Tüm Eðitmenleri Getiren API (GET: api/trainersapi)
         [HttpGet]
         public IActionResult GetTrainers()
         {
@@ -36,7 +34,6 @@ namespace FitnessCenter.WebApp.Controllers // DÝKKAT: .Api kýsmýný sildik
             return Ok(trainers);
         }
 
-        // 2. Filtreleme Yapan API (GET: api/trainersapi/search?serviceName=Yoga)
         [HttpGet("search")]
         public IActionResult SearchTrainers(string serviceName)
         {
@@ -47,7 +44,7 @@ namespace FitnessCenter.WebApp.Controllers // DÝKKAT: .Api kýsmýný sildik
 
             var trainers = _context.Trainers
                 .Include(t => t.Service)
-                .Where(t => t.Service.Name.Contains(serviceName)) // LINQ ile filtreleme
+                .Where(t => t.Service.Name.Contains(serviceName)) 
                 .Select(t => new
                 {
                     Id = t.Id,

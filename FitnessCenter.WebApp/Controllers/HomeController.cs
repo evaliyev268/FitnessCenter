@@ -15,12 +15,10 @@ namespace FitnessCenter.WebApp.Controllers
 
         public IActionResult Index()
         {
-            // Ana sayfada 'Uzman Kadromuz' kýsmýný göstermek için eðitmenleri gönderiyoruz
             var trainers = _context.Trainers.ToList();
             return View(trainers);
         }
 
-        // Privacy SÝLÝNDÝ, yerine Services GELDÝ
         public IActionResult Services()
         {
             var services = _context.Services.ToList();

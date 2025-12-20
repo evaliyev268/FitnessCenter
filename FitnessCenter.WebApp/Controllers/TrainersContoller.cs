@@ -15,7 +15,6 @@ namespace FitnessCenter.WebApp.Controllers
 
         public IActionResult Index()
         {
-            // SAHTE LİSTEYİ SİLDİK. Gerçek veritabanından çekiyoruz.
             var trainers = _context.Trainers.ToList();
             return View(trainers);
         }

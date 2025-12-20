@@ -5,7 +5,6 @@ using System.Security.Claims;
 
 namespace FitnessCenter.WebApp.Controllers
 {
-    // Sadece "Trainer" rolü girebilir
     [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Trainer")]
     public class TrainerController : Controller
     {
@@ -16,7 +15,6 @@ namespace FitnessCenter.WebApp.Controllers
             _context = context;
         }
 
-        // Eðitmenin Panel Ana Sayfasý
         public IActionResult Index()
         {
             var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
@@ -34,7 +32,6 @@ namespace FitnessCenter.WebApp.Controllers
             return View(appointments);
         }
 
-        // --- ONAYLA (Süre Kontrollü) ---
         [HttpPost]
         public IActionResult Approve(int id)
         {
@@ -42,11 +39,8 @@ namespace FitnessCenter.WebApp.Controllers
 
             if (appointment != null)
             {
-                // Onaylanacak randevunun süresi
                 DateTime newStart = appointment.AppointmentDate;
                 DateTime newEnd = newStart.AddMinutes(appointment.Service.Duration);
-
-                // Veritabanýndaki diðer "Onaylý" randevularla çakýþýyor mu?
                 var conflictingAppt = _context.Appointments
                     .Include(a => a.Service)
                     .Where(a => a.TrainerId == appointment.TrainerId && a.Status == "Onaylandý" && a.Id != id)
@@ -64,8 +58,6 @@ namespace FitnessCenter.WebApp.Controllers
                 {
                     appointment.Status = "Onaylandý";
 
-                    // ÇAKIÞAN 'BEKLEYEN' TALEPLERÝ OTOMATÝK REDDET
-                    // Çünkü artýk o saat doldu, diðerleri beklememeli.
                     var otherRequests = _context.Appointments
                        .Include(a => a.Service)
                        .Where(a => a.TrainerId == appointment.TrainerId && a.Status == "Bekliyor" && a.Id != id)
@@ -75,8 +67,6 @@ namespace FitnessCenter.WebApp.Controllers
                     {
                         DateTime reqStart = req.AppointmentDate;
                         DateTime reqEnd = reqStart.AddMinutes(req.Service.Duration);
-
-                        // Çakýþma varsa reddet
                         if (newStart < reqEnd && reqStart < newEnd)
                         {
                             req.Status = "Reddedildi (Dolu)";
@@ -89,7 +79,6 @@ namespace FitnessCenter.WebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // --- REDDET ---
         [HttpPost]
         public IActionResult Reject(int id)
         {

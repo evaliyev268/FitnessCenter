@@ -18,10 +18,9 @@ namespace FitnessCenter.WebApp.Controllers
             _context = context;
         }
 
-        // --- DASHBOARD ---
         public IActionResult Index() => View();
 
-        // --- LÝSTELEME SAYFALARI ---
+
         public IActionResult Users()
         {
             return View(_context.Users.ToList());
@@ -48,7 +47,6 @@ namespace FitnessCenter.WebApp.Controllers
             return View(appointments);
         }
 
-        // --- RANDEVU SÝLME ---
         [HttpPost]
         public IActionResult DeleteAppointment(int id)
         {
@@ -61,7 +59,7 @@ namespace FitnessCenter.WebApp.Controllers
             return RedirectToAction("Appointments");
         }
 
-        // --- EÐÝTMEN ÝÞLEMLERÝ (GÜNCELLENMÝÞ HALÝ) ---
+       
         [HttpGet]
         public IActionResult CreateTrainer()
         {
@@ -72,12 +70,12 @@ namespace FitnessCenter.WebApp.Controllers
         [HttpPost]
         public IActionResult CreateTrainer(Trainer trainer)
         {
-            // Validasyon sýrasýnda ImageUrl boþ olsa bile hata vermesin diye modelden hatayý siliyoruz
+            
             ModelState.Remove("ImageUrl");
 
             if (ModelState.IsValid)
             {
-                // 1. Email Kontrolü
+               
                 if (_context.Users.Any(u => u.Email == trainer.Email))
                 {
                     ModelState.AddModelError("", "Bu e-posta adresi zaten kullanýmda.");
@@ -85,21 +83,20 @@ namespace FitnessCenter.WebApp.Controllers
                     return View(trainer);
                 }
 
-                // 2. RESÝM KONTROLÜ (YENÝ)
-                // Eðer kullanýcý resim girmediyse varsayýlan bir resim ata
+               
                 if (string.IsNullOrEmpty(trainer.ImageUrl))
                 {
                     trainer.ImageUrl = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
                 }
 
-                // 3. Uzmanlýðý Otomatik Doldur
+               
                 var service = _context.Services.Find(trainer.ServiceId);
                 trainer.Speciality = service?.Name ?? "Genel";
 
-                // 4. Eðitmeni Kaydet
+               
                 _context.Trainers.Add(trainer);
 
-                // 5. Otomatik Kullanýcý Oluþtur
+               
                 var newUser = new User
                 {
                     FullName = trainer.Name,
@@ -123,7 +120,7 @@ namespace FitnessCenter.WebApp.Controllers
             var trainer = _context.Trainers.Find(id);
             if (trainer != null)
             {
-                // Ýliþkili kullanýcýyý da bulup silebiliriz (Ýsteðe baðlý)
+                
                 var user = _context.Users.FirstOrDefault(u => u.Email == trainer.Email);
                 if (user != null) _context.Users.Remove(user);
 
@@ -133,7 +130,7 @@ namespace FitnessCenter.WebApp.Controllers
             return RedirectToAction("Trainers");
         }
 
-        // --- HÝZMET ÝÞLEMLERÝ ---
+       
         [HttpGet]
         public IActionResult CreateService() => View();
 
@@ -181,7 +178,7 @@ namespace FitnessCenter.WebApp.Controllers
             return RedirectToAction("Services");
         }
 
-        // --- KULLANICI SÝLME (KENDÝNÝ SÝLME KORUMALI) ---
+        
         [HttpPost]
         public IActionResult DeleteUser(int id)
         {
@@ -190,7 +187,7 @@ namespace FitnessCenter.WebApp.Controllers
 
             if (userToDelete != null)
             {
-                // KENDÝNÝ SÝLME KONTROLÜ
+                
                 if (userToDelete.Email == currentUserEmail)
                 {
                     TempData["Error"] = "Güvenlik gereði kendi hesabýnýzý silemezsiniz!";

@@ -11,15 +11,12 @@ namespace FitnessCenter.WebApp.Data
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 context.Database.EnsureCreated();
 
-                // 1. Admin Ekle
                 string adminEmail = "b231210553@sakarya.edu.tr";
                 if (!context.Users.Any(u => u.Email == adminEmail))
                 {
                     context.Users.Add(new User { FullName = "Sistem Yöneticisi", Email = adminEmail, Password = "sau", Role = "Admin" });
                     context.SaveChanges();
                 }
-
-                // 2. TÜM EÐÝTMENLER ÝÇÝN KULLANICI HESABI OLUÞTUR (Giriþ Yapabilmeleri Ýçin)
                 var trainerUsers = new List<User>
                 {
                     new User { FullName = "Yusuf Hoca", Email = "yusuf@fitness.com", Password = "123", Role = "Trainer" },
@@ -36,7 +33,6 @@ namespace FitnessCenter.WebApp.Data
                 }
                 context.SaveChanges();
 
-                // 3. Hizmetleri Ekle
                 if (!context.Services.Any())
                 {
                     var services = new List<Service>
@@ -49,7 +45,6 @@ namespace FitnessCenter.WebApp.Data
                     context.SaveChanges();
                 }
 
-                // 4. Eðitmen Profillerini Ekle (Email Adresleri User Tablosuyla Eþleþmeli!)
                 if (!context.Trainers.Any())
                 {
                     var fitness = context.Services.FirstOrDefault(s => s.Name == "Fitness");
@@ -60,7 +55,6 @@ namespace FitnessCenter.WebApp.Data
                     {
                         var trainers = new List<Trainer>
                         {
-                            // Buradaki Email ile yukarýdaki User Email ayný olmalý ki sistem eþleþtirsin
                             new Trainer { Name = "Yusuf Ziya Gök", Email="yusuf@fitness.com", Speciality = "Vücut Geliþtirme", ImageUrl = "https://randomuser.me/api/portraits/men/32.jpg", ServiceId = fitness.Id },
                             new Trainer { Name = "Þahin Baðcý", Email="sahin@fitness.com", Speciality = "Pilates & Yoga", ImageUrl = "https://randomuser.me/api/portraits/men/59.jpg", ServiceId = yoga.Id },
                             new Trainer { Name = "Okan Koca", Email="okan@fitness.com", Speciality = "Crossfit", ImageUrl = "https://randomuser.me/api/portraits/men/85.jpg", ServiceId = crossfit.Id }

@@ -14,8 +14,6 @@ namespace FitnessCenter.WebApp.Models
         public Service? Service { get; set; }
         public DateTime AppointmentDate { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-
-        // YENÝ: Randevu Durumu (Bekliyor, Onaylandý, Reddedildi)
         public string Status { get; set; } = "Bekliyor";
     }
 }

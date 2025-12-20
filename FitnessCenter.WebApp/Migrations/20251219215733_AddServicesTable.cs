@@ -4,10 +4,8 @@
 
 namespace FitnessCenter.Migrations
 {
-    /// <inheritdoc />
     public partial class AddServicesTable : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -28,7 +26,6 @@ namespace FitnessCenter.Migrations
                 });
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

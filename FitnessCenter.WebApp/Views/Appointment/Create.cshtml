@@ -56,45 +56,39 @@
 
 @section Scripts {
     <script>
-        // Controller'dan gelen verileri JavaScript deðiþkenine atýyoruz
         var allTrainers = @Html.Raw(Json.Serialize(ViewBag.TrainersList));
         var allServices = @Html.Raw(Json.Serialize(ViewBag.ServicesList));
 
         $(document).ready(function () {
 
-            // Hizmet seçildiðinde çalýþýr
             $("#ServiceSelect").change(function () {
                 var selectedServiceId = $(this).val();
                 var trainerSelect = $("#TrainerSelect");
                 var serviceInfoBox = $("#ServiceInfo");
 
-                // Önceki seçimleri temizle
                 trainerSelect.empty();
                 trainerSelect.append('<option value="">-- Eðitmen Seçin --</option>');
 
                 if (selectedServiceId) {
-                    // A. FÝYAT VE SÜREYÝ GÖSTER
-                    // Seçilen hizmetin detaylarýný bul
                     var selectedService = allServices.find(s => s.id == selectedServiceId);
 
                     if(selectedService) {
                         $("#DurationText").text(selectedService.duration + " dk");
                         $("#PriceText").text(selectedService.price + " TL");
-                        serviceInfoBox.removeClass("d-none"); // Kutuyu görünür yap
+                        serviceInfoBox.removeClass("d-none");
                     }
 
-                    // B. EÐÝTMENLERÝ FÝLTRELE
-                    // Sadece o hizmeti verenleri getir
+
                     var filteredTrainers = allTrainers.filter(t => t.serviceId == selectedServiceId);
 
                     $.each(filteredTrainers, function (i, trainer) {
                         trainerSelect.append('<option value="' + trainer.id + '">' + trainer.name + '</option>');
                     });
 
-                    trainerSelect.prop("disabled", false); // Kilidi aç
+                    trainerSelect.prop("disabled", false); 
                 } else {
-                    trainerSelect.prop("disabled", true); // Kilitle
-                    serviceInfoBox.addClass("d-none"); // Kutuyu gizle
+                    trainerSelect.prop("disabled", true); 
+                    serviceInfoBox.addClass("d-none"); 
                 }
             });
         });

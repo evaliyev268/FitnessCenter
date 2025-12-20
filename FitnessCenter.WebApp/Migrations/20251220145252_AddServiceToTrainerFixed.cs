@@ -4,10 +4,8 @@
 
 namespace FitnessCenter.Migrations
 {
-    /// <inheritdoc />
     public partial class AddServiceToTrainerFixed : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
@@ -31,7 +29,6 @@ namespace FitnessCenter.Migrations
                 onDelete: ReferentialAction.Restrict);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(

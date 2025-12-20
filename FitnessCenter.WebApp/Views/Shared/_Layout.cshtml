@@ -31,6 +31,11 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Trainers" asp-action="Index">Eğitmenler</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-info text-white fw-bold px-3 me-2" asp-controller="Ai" asp-action="Index">
+                                <i class="fas fa-robot"></i> ElBOT
+                            </a>
+                        </li>
 
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -85,9 +90,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-dark">
-        <div class="container text-white text-center py-3">
-            &copy; 2025 - Fitness Center - <a asp-area="" asp-controller="Home" asp-action="Services" class="text-warning">Hizmetler</a>
+    <footer class="border-top footer text-muted bg-dark mt-auto py-2">
+        <div class="container text-white text-center small">
+            &copy; 2025 - Fitness Center - <a asp-area="" asp-controller="Home" asp-action="Services" class="text-warning text-decoration-none">Hizmetler</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
